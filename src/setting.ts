@@ -11,6 +11,7 @@ export interface PluginSettings {
   menuMode: string;
   workOnNetWork: boolean;
   fixPath: boolean;
+  applyImage: boolean;
 }
 
 export const DEFAULT_SETTINGS: PluginSettings = {
@@ -21,6 +22,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   menuMode: "auto",
   workOnNetWork: false,
   fixPath: false,
+  applyImage: true,
 };
 
 export class SettingTab extends PluginSettingTab {
@@ -34,7 +36,7 @@ export class SettingTab extends PluginSettingTab {
   display(): void {
     let { containerEl } = this;
 
-    const os = getOS()
+    const os = getOS();
 
     containerEl.empty();
     containerEl.createEl("h2", { text: t("Plugin Settings") });
@@ -100,7 +102,7 @@ export class SettingTab extends PluginSettingTab {
             })
         );
 
-      if (os !== 'Windows') {
+      if (os !== "Windows") {
         new Setting(containerEl)
           .setName(t("fixPath"))
           .setDesc(t("fixPathWarning"))
@@ -147,6 +149,23 @@ export class SettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.workOnNetWork)
           .onChange(async value => {
             this.plugin.settings.workOnNetWork = value;
+            this.display();
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName(t("Upload when clipboard has image and text together"))
+      .setDesc(
+        t(
+          "When you copy, some application like Excel will image and text to clipboard, you can upload or not."
+        )
+      )
+      .addToggle(toggle =>
+        toggle
+          .setValue(this.plugin.settings.applyImage)
+          .onChange(async value => {
+            this.plugin.settings.applyImage = value;
             this.display();
             await this.plugin.saveSettings();
           })

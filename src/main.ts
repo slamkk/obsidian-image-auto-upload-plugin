@@ -17,12 +17,7 @@ import { existsSync, mkdirSync, writeFileSync } from "fs";
 
 import fixPath from "fix-path";
 
-import {
-  isAssetTypeAnImage,
-  isAnImage,
-  getUrlAsset,
-  isCopyImageFile,
-} from "./utils";
+import { isAssetTypeAnImage, isAnImage, getUrlAsset } from "./utils";
 import { PicGoUploader, PicGoCoreUploader } from "./uploader";
 import Helper from "./helper";
 
@@ -427,7 +422,7 @@ export default class imageAutoUploadPlugin extends Plugin {
           }
 
           // 剪贴板中是图片时进行上传
-          if (files.length !== 0 && files[0]?.type.startsWith("image")) {
+          if (this.canUpload(evt.clipboardData)) {
             this.uploadFileAndEmbedImgurImage(
               editor,
               async (editor: Editor, pasteId: string) => {
@@ -483,6 +478,25 @@ export default class imageAutoUploadPlugin extends Plugin {
         }
       )
     );
+  }
+
+  canUpload(clipboardData: DataTransfer) {
+    this.settings.applyImage;
+    const files = clipboardData.files;
+    const text = clipboardData.getData("text");
+    console.log(files);
+
+    const hasImageFile =
+      files.length !== 0 && files[0].type.startsWith("image");
+    if (hasImageFile) {
+      if (!!text) {
+        return this.settings.applyImage;
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+    }
   }
 
   async uploadFileAndEmbedImgurImage(editor: Editor, callback: Function) {
