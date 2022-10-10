@@ -69,3 +69,7 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 # 2.6.2
 
 修复 [黏贴非图片文件时也会自动上传的 bug](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/19)。
+
+# 2.7.0
+
+增加配置项处理类似 Excel 等复制时会同时讲数据写入 image 和 text 的情况 [#49](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/49)
