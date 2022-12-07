@@ -73,3 +73,7 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 # 2.7.0
 
 增加配置项处理类似 Excel 等复制时会同时讲数据写入 image 和 text 的情况 [#49](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/49)
+
+# 2.8.0
+1. 修复wiki链接中包含缩放参数时的解析失败 [#67](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/67)
+2. 批量上传图片时支持网络图片 [#65](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/65)

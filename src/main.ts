@@ -319,7 +319,14 @@ export default class imageAutoUploadPlugin extends Plugin {
     for (const match of fileArray) {
       const imageName = match.name;
       const encodedUri = match.path;
-      if (!encodedUri.startsWith("http")) {
+
+      if (this.settings.workOnNetWork && encodedUri.startsWith("http")) {
+        imageList.push({
+          path: match.path,
+          name: imageName,
+          source: match.source,
+        });
+      } else {
         let abstractImageFile;
         // 当路径以“.”开头时，识别为相对路径，不然就认为时绝对路径
         if (encodedUri.startsWith(".")) {
