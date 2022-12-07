@@ -1,16 +1,4 @@
-import {
-  MarkdownView,
-  Plugin,
-  FileSystemAdapter,
-  Editor,
-  Menu,
-  MenuItem,
-  TFile,
-  normalizePath,
-  Notice,
-  addIcon,
-  App,
-} from "obsidian";
+import { MarkdownView, App } from "obsidian";
 import { parse } from "path";
 
 interface Image {
@@ -19,7 +7,7 @@ interface Image {
   source: string;
 }
 const REGEX_FILE = /\!\[(.*?)\]\((.*?)\)/g;
-const REGEX_WIKI_FILE = /\!\[\[(.*?)\]\]/g;
+const REGEX_WIKI_FILE = /\!\[\[(.*?)(\s\|.*?)?\]\]/g;
 
 export default class Helper {
   app: App;
@@ -90,12 +78,9 @@ export default class Helper {
     }
 
     for (const match of WikiMatches) {
-      console.log(match);
-
       const name = parse(match[1]).name;
       const path = match[1];
       const source = match[0];
-
       fileArray.push({
         path: path,
         name: name,
