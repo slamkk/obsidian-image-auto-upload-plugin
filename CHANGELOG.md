@@ -82,3 +82,4 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 # 2.9.0
 
 1. 增加域名黑名单 [#70](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/70)
+2. 剪切板自动上传的图片增加文件名 [#56](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/56)

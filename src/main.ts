@@ -451,14 +451,14 @@ export default class imageAutoUploadPlugin extends Plugin {
               editor,
               async (editor: Editor, pasteId: string) => {
                 let res = await this.uploader.uploadFileByClipboard();
-
                 if (res.code !== 0) {
                   this.handleFailedUpload(editor, pasteId, res.msg);
                   return;
                 }
                 const url = res.data;
                 return url;
-              }
+              },
+              evt.clipboardData
             ).catch(console.error);
             evt.preventDefault();
           }
@@ -493,7 +493,7 @@ export default class imageAutoUploadPlugin extends Plugin {
               data.result.map((value: string) => {
                 let pasteId = (Math.random() + 1).toString(36).substr(2, 5);
                 this.insertTemporaryText(editor, pasteId);
-                this.embedMarkDownImage(editor, pasteId, value);
+                this.embedMarkDownImage(editor, pasteId, value, files[0].name);
               });
             } else {
               new Notice("Upload error");
@@ -522,13 +522,17 @@ export default class imageAutoUploadPlugin extends Plugin {
     }
   }
 
-  async uploadFileAndEmbedImgurImage(editor: Editor, callback: Function) {
+  async uploadFileAndEmbedImgurImage(
+    editor: Editor,
+    callback: Function,
+    clipboardData: DataTransfer
+  ) {
     let pasteId = (Math.random() + 1).toString(36).substr(2, 5);
     this.insertTemporaryText(editor, pasteId);
-
+    const name = clipboardData.files[0].name;
     try {
       const url = await callback(editor, pasteId);
-      this.embedMarkDownImage(editor, pasteId, url);
+      this.embedMarkDownImage(editor, pasteId, url, name);
     } catch (e) {
       this.handleFailedUpload(editor, pasteId, e);
     }
@@ -543,9 +547,14 @@ export default class imageAutoUploadPlugin extends Plugin {
     return `![Uploading file...${id}]()`;
   }
 
-  embedMarkDownImage(editor: Editor, pasteId: string, imageUrl: any) {
+  embedMarkDownImage(
+    editor: Editor,
+    pasteId: string,
+    imageUrl: any,
+    name: string = ""
+  ) {
     let progressText = imageAutoUploadPlugin.progressTextFor(pasteId);
-    let markDownImage = `![](${imageUrl})`;
+    let markDownImage = `![${name}](${imageUrl})`;
 
     imageAutoUploadPlugin.replaceFirstOccurrence(
       editor,
