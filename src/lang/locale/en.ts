@@ -16,8 +16,8 @@ export default {
   "It should be set like your ob setting, otherwise the feature can not be work.":
     "It should be set like your ob setting, otherwise the feature can not be work.",
   "Work on network": "Work on network",
-  "When you paste, md standard image link in your clipboard will be auto upload.":
-    "When you paste, md standard image link in your clipboard will be auto upload.",
+  "Work on network Description":
+    "Allow upload network image by 'Upload all' command.\n Or when you paste, md standard image link in your clipboard will be auto upload.",
   absolute: "absolute",
   relative: "relative",
   fixPath: "fixPath",
@@ -27,4 +27,7 @@ export default {
     "Upload when clipboard has image and text together",
   "When you copy, some application like Excel will image and text to clipboard, you can upload or not.":
     "When you copy, some application like Excel will image and text to clipboard, you can upload or not.",
+  "Network Domain Black List": "Network Domain Black List",
+  "Network Domain Black List Description":
+    "Image in the domain list will not be upload,use comma separated",
 };

@@ -16,8 +16,8 @@ export default {
   "It should be set like your ob setting, otherwise the feature can not be work.":
     "默认跟随 ob 的设置，修改后可能无法正常使用",
   "Work on network": "应用网络图片",
-  "When you paste, md standard image link in your clipboard will be auto upload.":
-    "当你进行黏贴时，剪切板中的标准 md 图片会被上传",
+  "Work on network Description":
+    "当你上传所有图片时，也会上传网络图片。以及当你进行黏贴时，剪切板中的标准 md 图片会被上传",
   absolute: "基于仓库根目录的绝对路径",
   relative: "基于当前笔记的相对路径",
   fixPath: "修正PATH变量",
@@ -27,4 +27,7 @@ export default {
     "当剪切板同时拥有文本和图片剪切板数据时是否上传图片",
   "When you copy, some application like Excel will image and text to clipboard, you can upload or not.":
     "当你复制时，某些应用例如 Excel 会在剪切板同时文本和图像数据，确认是否上传。",
+  "Network Domain Black List": "网络图片域名黑名单",
+  "Network Domain Black List Description":
+    "黑名单域名中的图片将不会被上传，用英文逗号分割",
 };

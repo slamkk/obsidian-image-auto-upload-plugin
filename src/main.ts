@@ -321,6 +321,24 @@ export default class imageAutoUploadPlugin extends Plugin {
       const encodedUri = match.path;
 
       if (this.settings.workOnNetWork && encodedUri.startsWith("http")) {
+        console.log(
+          match.path,
+          this.helper.hasBlackDomain(
+            match.path,
+            this.settings.newWorkBlackDomains
+          ),
+          this.settings.newWorkBlackDomains
+        );
+
+        if (
+          this.helper.hasBlackDomain(
+            match.path,
+            this.settings.newWorkBlackDomains
+          )
+        ) {
+          continue;
+        }
+
         imageList.push({
           path: match.path,
           name: imageName,
@@ -374,7 +392,6 @@ export default class imageAutoUploadPlugin extends Plugin {
       if (res.success) {
         let uploadUrlList = res.result;
         imageList.map(item => {
-          // gitea不能上传超过1M的数据，上传多张照片，错误的话会返回什么？还有待验证
           const uploadImage = uploadUrlList.shift();
           key = key.replaceAll(item.source, `![${item.name}](${uploadImage})`);
         });
@@ -491,7 +508,6 @@ export default class imageAutoUploadPlugin extends Plugin {
     this.settings.applyImage;
     const files = clipboardData.files;
     const text = clipboardData.getData("text");
-    console.log(files);
 
     const hasImageFile =
       files.length !== 0 && files[0].type.startsWith("image");

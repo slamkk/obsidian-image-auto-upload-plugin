@@ -89,4 +89,12 @@ export default class Helper {
     }
     return fileArray;
   }
+
+  hasBlackDomain(src: string, blackDomains: string) {
+    const blackDomainList = blackDomains.split(",");
+    let url = new URL(src);
+    const domain = url.hostname;
+
+    return blackDomainList.some(blackDomain => domain.includes(blackDomain));
+  }
 }

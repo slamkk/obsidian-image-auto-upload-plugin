@@ -10,6 +10,7 @@ export interface PluginSettings {
   picgoCorePath: string;
   menuMode: string;
   workOnNetWork: boolean;
+  newWorkBlackDomains: string;
   fixPath: boolean;
   applyImage: boolean;
 }
@@ -23,6 +24,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   workOnNetWork: false,
   fixPath: false,
   applyImage: true,
+  newWorkBlackDomains: "",
 };
 
 export class SettingTab extends PluginSettingTab {
@@ -139,17 +141,25 @@ export class SettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName(t("Work on network"))
-      .setDesc(
-        t(
-          "When you paste, md standard image link in your clipboard will be auto upload."
-        )
-      )
+      .setDesc(t("Work on network Description"))
       .addToggle(toggle =>
         toggle
           .setValue(this.plugin.settings.workOnNetWork)
           .onChange(async value => {
             this.plugin.settings.workOnNetWork = value;
             this.display();
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName(t("Network Domain Black List"))
+      .setDesc(t("Network Domain Black List Description"))
+      .addTextArea(textArea =>
+        textArea
+          .setValue(this.plugin.settings.newWorkBlackDomains)
+          .onChange(async value => {
+            this.plugin.settings.newWorkBlackDomains = value;
             await this.plugin.saveSettings();
           })
       );
