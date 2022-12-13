@@ -83,3 +83,7 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 
 1. 增加域名黑名单 [#70](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/70)
 2. 剪切板自动上传的图片增加文件名 [#56](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/56)
+
+# 3.0.0
+
+1. 修改了 `upload all image` 和右键上传的实现方式，目前支持所有类型

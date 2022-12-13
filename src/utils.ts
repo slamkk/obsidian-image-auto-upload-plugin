@@ -69,3 +69,18 @@ export function getLastImage(list: string[]) {
   });
   return lastImage;
 }
+
+interface AnyObj {
+  [key: string]: any;
+}
+
+export function arrayToObject<T extends AnyObj>(
+  arr: T[],
+  key: string
+): { [key: string]: T } {
+  const obj: { [key: string]: T } = {};
+  arr.forEach(element => {
+    obj[element[key]] = element;
+  });
+  return obj;
+}

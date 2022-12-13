@@ -38,7 +38,7 @@ press `ctrl+P` and input `upload all images`，enter, then will auto upload all 
 
 ## download all internet to local
 
-press `ctrl+P` and input `download all images`，enter, then will auto download all internet images to loacl.only test in win10
+press `ctrl+P` and input `download all images`，enter, then will auto download all internet images to loacl, only test in win10
 
 ## Upload image by contextMenu
 

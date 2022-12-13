@@ -12,12 +12,17 @@ import {
   requestUrl,
 } from "obsidian";
 
-import { resolve, relative, join, parse, posix } from "path";
+import { resolve, relative, join, parse, posix, basename } from "path";
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 
 import fixPath from "fix-path";
 
-import { isAssetTypeAnImage, isAnImage, getUrlAsset } from "./utils";
+import {
+  isAssetTypeAnImage,
+  isAnImage,
+  getUrlAsset,
+  arrayToObject,
+} from "./utils";
 import { PicGoUploader, PicGoCoreUploader } from "./uploader";
 import Helper from "./helper";
 
@@ -302,84 +307,79 @@ export default class imageAutoUploadPlugin extends Plugin {
     );
   }
 
+  filterFile(fileArray: Image[]) {
+    const imageList: Image[] = [];
+
+    for (const match of fileArray) {
+      if (this.settings.workOnNetWork && match.path.startsWith("http")) {
+        if (
+          !this.helper.hasBlackDomain(
+            match.path,
+            this.settings.newWorkBlackDomains
+          )
+        ) {
+          imageList.push({
+            path: match.path,
+            name: match.name,
+            source: match.source,
+          });
+        }
+      } else {
+        imageList.push({
+          path: match.path,
+          name: match.name,
+          source: match.source,
+        });
+      }
+    }
+
+    return imageList;
+  }
+  getFile(fileName: string, fileMap: any) {
+    if (!fileMap) {
+      fileMap = arrayToObject(this.app.vault.getFiles(), "name");
+    }
+    return fileMap[fileName];
+  }
   // uploda all file
   uploadAllFile() {
-    let key = this.helper.getValue();
+    let content = this.helper.getValue();
 
-    const thisPath = this.app.vault.getAbstractFileByPath(
-      this.app.workspace.getActiveFile().path
-    );
     const basePath = (
       this.app.vault.adapter as FileSystemAdapter
     ).getBasePath();
-
+    const fileMap = arrayToObject(this.app.vault.getFiles(), "name");
     let imageList: Image[] = [];
-    const fileArray = this.helper.getAllFiles();
+    const fileArray = this.filterFile(this.helper.getAllFiles());
 
     for (const match of fileArray) {
       const imageName = match.name;
       const encodedUri = match.path;
 
-      if (this.settings.workOnNetWork && encodedUri.startsWith("http")) {
-        console.log(
-          match.path,
-          this.helper.hasBlackDomain(
-            match.path,
-            this.settings.newWorkBlackDomains
-          ),
-          this.settings.newWorkBlackDomains
-        );
-
-        if (
-          this.helper.hasBlackDomain(
-            match.path,
-            this.settings.newWorkBlackDomains
-          )
-        ) {
-          continue;
-        }
-
+      if (encodedUri.startsWith("http")) {
         imageList.push({
           path: match.path,
           name: imageName,
           source: match.source,
         });
       } else {
-        let abstractImageFile;
-        // 当路径以“.”开头时，识别为相对路径，不然就认为时绝对路径
-        if (encodedUri.startsWith(".")) {
-          abstractImageFile = decodeURI(
-            join(
-              basePath,
-              posix.resolve(posix.join("/", thisPath.parent.path), encodedUri)
-            )
-          );
-        } else {
-          abstractImageFile = decodeURI(join(basePath, encodedUri));
+        const fileName = basename(decodeURI(encodedUri));
+        const file = this.getFile(fileName, fileMap);
 
-          // 当解析为绝对路径却找不到文件，尝试解析为相对路径
-          if (!existsSync(abstractImageFile)) {
-            abstractImageFile = decodeURI(
-              join(
-                basePath,
-                posix.resolve(posix.join("/", thisPath.parent.path), encodedUri)
-              )
-            );
+        if (file) {
+          const abstractImageFile = join(basePath, file.path);
+
+          if (isAssetTypeAnImage(abstractImageFile)) {
+            imageList.push({
+              path: abstractImageFile,
+              name: imageName,
+              source: match.source,
+            });
           }
-        }
-
-        if (
-          existsSync(abstractImageFile) &&
-          isAssetTypeAnImage(abstractImageFile)
-        ) {
-          imageList.push({
-            path: abstractImageFile,
-            name: imageName,
-            source: match.source,
-          });
         }
       }
     }
+
     if (imageList.length === 0) {
       new Notice("没有解析到图像文件");
       return;
@@ -393,9 +393,12 @@ export default class imageAutoUploadPlugin extends Plugin {
         let uploadUrlList = res.result;
         imageList.map(item => {
           const uploadImage = uploadUrlList.shift();
-          key = key.replaceAll(item.source, `![${item.name}](${uploadImage})`);
+          content = content.replaceAll(
+            item.source,
+            `![${item.name}](${uploadImage})`
+          );
         });
-        this.helper.setValue(key);
+        this.helper.setValue(content);
       } else {
         new Notice("Upload error");
       }
@@ -459,7 +462,7 @@ export default class imageAutoUploadPlugin extends Plugin {
                 return url;
               },
               evt.clipboardData
-            ).catch(console.error);
+            ).catch();
             evt.preventDefault();
           }
         }
