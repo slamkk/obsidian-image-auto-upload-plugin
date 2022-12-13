@@ -8,7 +8,6 @@ export interface PluginSettings {
   uploadServer: string;
   uploader: string;
   picgoCorePath: string;
-  menuMode: string;
   workOnNetWork: boolean;
   newWorkBlackDomains: string;
   fixPath: boolean;
@@ -20,7 +19,6 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   uploader: "PicGo",
   uploadServer: "http://127.0.0.1:36677/upload",
   picgoCorePath: "",
-  menuMode: "auto",
   workOnNetWork: false,
   fixPath: false,
   applyImage: true,
@@ -118,26 +116,6 @@ export class SettingTab extends PluginSettingTab {
           );
       }
     }
-
-    new Setting(containerEl)
-      .setName(t("Upload contextMenu mode"))
-      .setDesc(
-        t(
-          "It should be set like your ob setting, otherwise the feature can not be work."
-        )
-      )
-      .addDropdown(cb =>
-        cb
-          .addOption("auto", "auto")
-          .addOption("absolute", t("absolute"))
-          .addOption("relative", t("relative"))
-          .setValue(this.plugin.settings.menuMode)
-          .onChange(async value => {
-            this.plugin.settings.menuMode = value;
-            this.display();
-            await this.plugin.saveSettings();
-          })
-      );
 
     new Setting(containerEl)
       .setName(t("Work on network"))

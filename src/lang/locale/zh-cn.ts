@@ -12,14 +12,9 @@ export default {
   "PicGo-Core path": "PicGo-Core 路径",
   "Please input PicGo-Core path, default using environment variables":
     "请输入 PicGo-Core path，默认使用环境变量",
-  "Upload contextMenu mode": "右键上传的内部链接类型",
-  "It should be set like your ob setting, otherwise the feature can not be work.":
-    "默认跟随 ob 的设置，修改后可能无法正常使用",
   "Work on network": "应用网络图片",
   "Work on network Description":
     "当你上传所有图片时，也会上传网络图片。以及当你进行黏贴时，剪切板中的标准 md 图片会被上传",
-  absolute: "基于仓库根目录的绝对路径",
-  relative: "基于当前笔记的相对路径",
   fixPath: "修正PATH变量",
   fixPathWarning:
     "此选项用于修复Linux和Mac上 PicGo-Core 上传失败的问题。它会修改 Obsidian 内的 PATH 变量，如果 Obsidian 遇到任何BUG，先关闭这个选项试试！",

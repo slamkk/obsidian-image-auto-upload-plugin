@@ -12,14 +12,9 @@ export default {
   "PicGo-Core path": "PicGo-Core path",
   "Please input PicGo-Core path, default using environment variables":
     "Please input PicGo-Core path, default using environment variables",
-  "Upload contextMenu mode": "Upload contextMenu mode",
-  "It should be set like your ob setting, otherwise the feature can not be work.":
-    "It should be set like your ob setting, otherwise the feature can not be work.",
   "Work on network": "Work on network",
   "Work on network Description":
     "Allow upload network image by 'Upload all' command.\n Or when you paste, md standard image link in your clipboard will be auto upload.",
-  absolute: "absolute",
-  relative: "relative",
   fixPath: "fixPath",
   fixPathWarning:
     "This option is used to fix PicGo-core upload failures on Linux and Mac. It modifies the PATH variable within Obsidian. If Obsidian encounters any bugs, turn off the option, try again! ",

@@ -245,66 +245,63 @@ export default class imageAutoUploadPlugin extends Plugin {
                 if (!(file instanceof TFile)) {
                   return false;
                 }
-
-                const basePath = (
-                  this.app.vault.adapter as FileSystemAdapter
-                ).getBasePath();
-
-                const uri = decodeURI(resolve(basePath, file.path));
-
-                this.uploader.uploadFiles([uri]).then(res => {
-                  if (res.success) {
-                    // @ts-ignore
-                    let uploadUrl = res.result[0];
-                    const sourceUri = encodeURI(
-                      relative(
-                        this.app.workspace.getActiveFile().parent.path,
-                        file.path
-                      ).replaceAll("\\", "/")
-                    );
-
-                    let value = this.helper.getValue();
-                    let menuMode = this.settings.menuMode;
-                    if (menuMode === "auto") {
-                      // @ts-ignore
-                      menuMode = this.app.vault.config.newLinkFormat;
-                    }
-
-                    if (menuMode === "relative") {
-                      // 替换相对路径的 ![]()格式
-                      value = value.replaceAll(sourceUri, uploadUrl);
-
-                      // 替换相对路径的 ![[]]格式
-                      value = value.replaceAll(
-                        `![[${decodeURI(sourceUri)}]]`,
-                        `![](${uploadUrl})`
-                      );
-                    } else if (menuMode === "absolute") {
-                      // 替换绝对路径的 ![[]]格式
-                      value = value.replaceAll(
-                        `![[${file.path}]]`,
-                        `![](${uploadUrl})`
-                      );
-
-                      // 替换绝对路径的 ![]()格式
-                      value = value.replaceAll(
-                        file.path.replaceAll(" ", "%20"),
-                        uploadUrl
-                      );
-                    } else {
-                      new Notice(`Not support ${menuMode} mode`);
-                    }
-
-                    this.helper.setValue(value);
-                  } else {
-                    new Notice(res.msg || "Upload error");
-                  }
-                });
+                this.fileMenuUpload(file);
+                console.log(file);
               });
           });
         }
       )
     );
+  }
+
+  fileMenuUpload(file: TFile) {
+    let content = this.helper.getValue();
+
+    const basePath = (
+      this.app.vault.adapter as FileSystemAdapter
+    ).getBasePath();
+    let imageList: Image[] = [];
+    const fileArray = this.helper.getAllFiles();
+
+    for (const match of fileArray) {
+      const imageName = match.name;
+      const encodedUri = match.path;
+
+      const fileName = basename(decodeURI(encodedUri));
+
+      if (file && file.name === fileName) {
+        const abstractImageFile = join(basePath, file.path);
+
+        if (isAssetTypeAnImage(abstractImageFile)) {
+          imageList.push({
+            path: abstractImageFile,
+            name: imageName,
+            source: match.source,
+          });
+        }
+      }
+    }
+
+    if (imageList.length === 0) {
+      new Notice("没有解析到图像文件");
+      return;
+    }
+
+    this.uploader.uploadFiles(imageList.map(item => item.path)).then(res => {
+      if (res.success) {
+        let uploadUrlList = res.result;
+        imageList.map(item => {
+          const uploadImage = uploadUrlList.shift();
+          content = content.replaceAll(
+            item.source,
+            `![${item.name}](${uploadImage})`
+          );
+        });
+        this.helper.setValue(content);
+      } else {
+        new Notice("Upload error");
+      }
+    });
   }
 
   filterFile(fileArray: Image[]) {
@@ -386,7 +383,6 @@ export default class imageAutoUploadPlugin extends Plugin {
     } else {
       new Notice(`共找到${imageList.length}个图像文件，开始上传`);
     }
-    console.log(imageList);
 
     this.uploader.uploadFiles(imageList.map(item => item.path)).then(res => {
       if (res.success) {

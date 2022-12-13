@@ -43,7 +43,6 @@ press `ctrl+P` and input `download all images`，enter, then will auto download 
 ## Upload image by contextMenu
 
 Now you can upload image by contextMenu in edit mode.
-Now support standard md link, wiki link and absolute,relative.
 
 ## Support drag-and-drop
 
