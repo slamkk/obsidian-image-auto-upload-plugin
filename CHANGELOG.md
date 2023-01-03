@@ -87,3 +87,7 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 # 3.0.0
 
 1. 修改了 `upload all image` 和右键上传的实现方式，目前支持所有类型
+
+# 3.0.1
+
+1. 修复在未设置黑名单的情况下，所有网络图片均无法上传的问题

@@ -91,6 +91,9 @@ export default class Helper {
   }
 
   hasBlackDomain(src: string, blackDomains: string) {
+    if (blackDomains.trim() === "") {
+      return false;
+    }
     const blackDomainList = blackDomains.split(",");
     let url = new URL(src);
     const domain = url.hostname;
