@@ -91,3 +91,7 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 # 3.0.1
 
 1. 修复在未设置黑名单的情况下，所有网络图片均无法上传的问题
+
+# 3.1.0
+
+1. 修复剪贴板内容为图片链接时黑名单失效的问题 [#73](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/73)

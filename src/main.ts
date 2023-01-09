@@ -420,7 +420,14 @@ export default class imageAutoUploadPlugin extends Plugin {
             const clipboardValue = evt.clipboardData.getData("text/plain");
             const imageList = this.helper
               .getImageLink(clipboardValue)
-              .filter(image => image.path.startsWith("http"));
+              .filter(image => image.path.startsWith("http"))
+              .filter(
+                image =>
+                  !this.helper.hasBlackDomain(
+                    image.path,
+                    this.settings.newWorkBlackDomains
+                  )
+              );
 
             if (imageList.length !== 0) {
               this.uploader
