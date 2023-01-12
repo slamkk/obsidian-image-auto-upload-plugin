@@ -13,7 +13,7 @@ import {
 } from "obsidian";
 
 import { resolve, relative, join, parse, posix, basename } from "path";
-import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, writeFileSync, unlink } from "fs";
 
 import fixPath from "fix-path";
 
@@ -246,7 +246,6 @@ export default class imageAutoUploadPlugin extends Plugin {
                   return false;
                 }
                 this.fileMenuUpload(file);
-                console.log(file);
               });
           });
         }
@@ -298,6 +297,14 @@ export default class imageAutoUploadPlugin extends Plugin {
           );
         });
         this.helper.setValue(content);
+
+        if (this.settings.deleteSource) {
+          imageList.map(image => {
+            if (!image.path.startsWith("http")) {
+              unlink(image.path, () => {});
+            }
+          });
+        }
       } else {
         new Notice("Upload error");
       }
@@ -395,6 +402,14 @@ export default class imageAutoUploadPlugin extends Plugin {
           );
         });
         this.helper.setValue(content);
+
+        if (this.settings.deleteSource) {
+          imageList.map(image => {
+            if (!image.path.startsWith("http")) {
+              unlink(image.path, () => {});
+            }
+          });
+        }
       } else {
         new Notice("Upload error");
       }

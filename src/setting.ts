@@ -12,6 +12,7 @@ export interface PluginSettings {
   newWorkBlackDomains: string;
   fixPath: boolean;
   applyImage: boolean;
+  deleteSource: boolean;
 }
 
 export const DEFAULT_SETTINGS: PluginSettings = {
@@ -23,6 +24,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   fixPath: false,
   applyImage: true,
   newWorkBlackDomains: "",
+  deleteSource: false,
 };
 
 export class SettingTab extends PluginSettingTab {
@@ -154,6 +156,19 @@ export class SettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.applyImage)
           .onChange(async value => {
             this.plugin.settings.applyImage = value;
+            this.display();
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName(t("Delete source file after you upload file"))
+      .setDesc(t("Delete source file in ob assets after you upload file."))
+      .addToggle(toggle =>
+        toggle
+          .setValue(this.plugin.settings.deleteSource)
+          .onChange(async value => {
+            this.plugin.settings.deleteSource = value;
             this.display();
             await this.plugin.saveSettings();
           })

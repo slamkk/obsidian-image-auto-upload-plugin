@@ -95,3 +95,4 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 # 3.1.0
 
 1. 修复剪贴板内容为图片链接时黑名单失效的问题 [#73](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/73)
+2. 支持上传后删除源文件

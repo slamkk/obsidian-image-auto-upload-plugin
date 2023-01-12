@@ -25,4 +25,8 @@ export default {
   "Network Domain Black List": "Network Domain Black List",
   "Network Domain Black List Description":
     "Image in the domain list will not be upload,use comma separated",
+  "Delete source file after you upload file":
+    "Delete source file after you upload file",
+  "Delete source file in ob assets after you upload file.":
+    "Delete source file in ob assets after you upload file.",
 };
