@@ -2,17 +2,23 @@ import { resolve, extname, relative, join, parse, posix } from "path";
 import { Readable } from "stream";
 import { clipboard } from "electron";
 
+const IMAGE_EXT_LIST = [
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".bmp",
+  ".gif",
+  ".svg",
+  ".tiff",
+  ".webp",
+  ".avif",
+];
+
 export function isAnImage(ext: string) {
-  return [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".svg", ".tiff"].includes(
-    ext.toLowerCase()
-  );
+  return IMAGE_EXT_LIST.includes(ext.toLowerCase());
 }
 export function isAssetTypeAnImage(path: string): Boolean {
-  return (
-    [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".svg", ".tiff"].indexOf(
-      extname(path).toLowerCase()
-    ) !== -1
-  );
+  return isAnImage(extname(path));
 }
 
 export function getOS() {
