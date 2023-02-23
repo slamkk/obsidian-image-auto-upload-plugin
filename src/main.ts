@@ -353,6 +353,7 @@ export default class imageAutoUploadPlugin extends Plugin {
       this.app.vault.adapter as FileSystemAdapter
     ).getBasePath();
     const fileMap = arrayToObject(this.app.vault.getFiles(), "name");
+    const filePathMap = arrayToObject(this.app.vault.getFiles(), "path");
     let imageList: Image[] = [];
     const fileArray = this.filterFile(this.helper.getAllFiles());
 
@@ -368,7 +369,12 @@ export default class imageAutoUploadPlugin extends Plugin {
         });
       } else {
         const fileName = basename(decodeURI(encodedUri));
-        const file = this.getFile(fileName, fileMap);
+        let file;
+        if (filePathMap[decodeURI(encodedUri)]) {
+          file = filePathMap[decodeURI(encodedUri)];
+        } else {
+          file = this.getFile(fileName, fileMap);
+        }
 
         if (file) {
           const abstractImageFile = join(basePath, file.path);
