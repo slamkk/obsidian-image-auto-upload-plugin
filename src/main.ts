@@ -12,7 +12,7 @@ import {
   requestUrl,
 } from "obsidian";
 
-import { resolve, relative, join, parse, posix, basename } from "path";
+import { resolve, relative, join, parse, posix, basename, dirname } from "path";
 import { existsSync, mkdirSync, writeFileSync, unlink } from "fs";
 
 import fixPath from "fix-path";
@@ -352,6 +352,7 @@ export default class imageAutoUploadPlugin extends Plugin {
     const basePath = (
       this.app.vault.adapter as FileSystemAdapter
     ).getBasePath();
+    const activeFile = this.app.workspace.getActiveFile();
     const fileMap = arrayToObject(this.app.vault.getFiles(), "name");
     const filePathMap = arrayToObject(this.app.vault.getFiles(), "path");
     let imageList: Image[] = [];
@@ -370,9 +371,37 @@ export default class imageAutoUploadPlugin extends Plugin {
       } else {
         const fileName = basename(decodeURI(encodedUri));
         let file;
+        // 绝对路径
         if (filePathMap[decodeURI(encodedUri)]) {
           file = filePathMap[decodeURI(encodedUri)];
-        } else {
+        }
+
+        // 相对路径
+        if (
+          (!file && decodeURI(encodedUri).startsWith("./")) ||
+          decodeURI(encodedUri).startsWith("../")
+        ) {
+          const filePath = resolve(
+            join(basePath, dirname(activeFile.path)),
+            decodeURI(encodedUri)
+          );
+
+          if (existsSync(filePath)) {
+            const path = normalizePath(
+              relative(
+                basePath,
+                resolve(
+                  join(basePath, dirname(activeFile.path)),
+                  decodeURI(encodedUri)
+                )
+              )
+            );
+
+            file = filePathMap[path];
+          }
+        }
+        // 尽可能短路径
+        if (!file) {
           file = this.getFile(fileName, fileMap);
         }
 
