@@ -10,6 +10,7 @@ import {
   Notice,
   addIcon,
   requestUrl,
+  MarkdownFileInfo,
 } from "obsidian";
 
 import { resolve, relative, join, parse, posix, basename, dirname } from "path";
@@ -24,7 +25,9 @@ import {
   arrayToObject,
 } from "./utils";
 import { PicGoUploader, PicGoCoreUploader } from "./uploader";
+import { PicGoDeleter } from "./deleter";
 import Helper from "./helper";
+import { t } from "./lang/helpers";
 
 import { SettingTab, PluginSettings, DEFAULT_SETTINGS } from "./setting";
 
@@ -39,6 +42,7 @@ export default class imageAutoUploadPlugin extends Plugin {
   helper: Helper;
   editor: Editor;
   picGoUploader: PicGoUploader;
+  picGoDeleter: PicGoDeleter;
   picGoCoreUploader: PicGoCoreUploader;
   uploader: PicGoUploader | PicGoCoreUploader;
 
@@ -57,6 +61,7 @@ export default class imageAutoUploadPlugin extends Plugin {
 
     this.helper = new Helper(this.app);
     this.picGoUploader = new PicGoUploader(this.settings);
+    this.picGoDeleter = new PicGoDeleter(this);
     this.picGoCoreUploader = new PicGoCoreUploader(this.settings);
 
     if (this.settings.uploader === "PicGo") {
@@ -110,7 +115,71 @@ export default class imageAutoUploadPlugin extends Plugin {
 
     this.setupPasteHandler();
     this.registerFileMenu();
+
+    this.registerSelection();
   }
+
+  registerSelection() {
+    this.registerEvent(
+      this.app.workspace.on(
+        "editor-menu",
+        (menu: Menu, editor: Editor, info: MarkdownView | MarkdownFileInfo) => {
+          if (this.app.workspace.getLeavesOfType("markdown").length === 0) {
+            return;
+          }
+          const selection = editor.getSelection();
+          if (selection) {
+            const markdownRegex = /!\[.*\]\((.*)\)/g;
+            const markdownMatch = markdownRegex.exec(selection);
+            if (markdownMatch && markdownMatch.length > 1) {
+              const markdownUrl = markdownMatch[1];
+              if (
+                this.settings.uploadedImages.find(
+                  (item: { imgUrl: string }) => item.imgUrl === markdownUrl
+                )
+              ) {
+                this.addMenu(menu, markdownUrl, editor);
+              }
+            }
+          }
+        }
+      )
+    );
+  }
+
+  addMenu = (menu: Menu, imgPath: string, editor: Editor) => {
+    menu.addItem((item: MenuItem) =>
+      item
+        .setIcon("trash-2")
+        .setTitle(t("Delete image using PicList"))
+        .onClick(async () => {
+          try {
+            const selectedItem = this.settings.uploadedImages.find(
+              (item: { imgUrl: string }) => item.imgUrl === imgPath
+            );
+            if (selectedItem) {
+              const res = await this.picGoDeleter.deleteImage([selectedItem]);
+              if (res.success) {
+                new Notice(t("Delete successfully"));
+                const selection = editor.getSelection();
+                if (selection) {
+                  editor.replaceSelection("");
+                }
+                this.settings.uploadedImages =
+                  this.settings.uploadedImages.filter(
+                    (item: { imgUrl: string }) => item.imgUrl !== imgPath
+                  );
+                this.saveSettings();
+              } else {
+                new Notice(t("Delete failed"));
+              }
+            }
+          } catch {
+            new Notice(t("Error, could not delete"));
+          }
+        })
+    );
+  };
 
   async downloadAllImageFiles() {
     const folderPath = this.getFileAssetPath();
@@ -289,6 +358,12 @@ export default class imageAutoUploadPlugin extends Plugin {
     this.uploader.uploadFiles(imageList.map(item => item.path)).then(res => {
       if (res.success) {
         let uploadUrlList = res.result;
+        const uploadUrlFullResultList = res.resultFull || [];
+        this.settings.uploadedImages = [
+          ...(this.settings.uploadedImages || []),
+          ...uploadUrlFullResultList,
+        ];
+        this.saveSettings();
         imageList.map(item => {
           const uploadImage = uploadUrlList.shift();
           content = content.replaceAll(
@@ -429,6 +504,12 @@ export default class imageAutoUploadPlugin extends Plugin {
     this.uploader.uploadFiles(imageList.map(item => item.path)).then(res => {
       if (res.success) {
         let uploadUrlList = res.result;
+        const uploadUrlFullResultList = res.resultFull || [];
+        this.settings.uploadedImages = [
+          ...(this.settings.uploadedImages || []),
+          ...uploadUrlFullResultList,
+        ];
+        this.saveSettings();
         imageList.map(item => {
           const uploadImage = uploadUrlList.shift();
           content = content.replaceAll(
@@ -494,6 +575,12 @@ export default class imageAutoUploadPlugin extends Plugin {
                       );
                     });
                     this.helper.setValue(value);
+                    const uploadUrlFullResultList = res.fullResult || [];
+                    this.settings.uploadedImages = [
+                      ...(this.settings.uploadedImages || []),
+                      ...uploadUrlFullResultList,
+                    ];
+                    this.saveSettings();
                   } else {
                     new Notice("Upload error");
                   }
@@ -512,6 +599,12 @@ export default class imageAutoUploadPlugin extends Plugin {
                   return;
                 }
                 const url = res.data;
+                const uploadUrlFullResultList = res.fullResult || [];
+                this.settings.uploadedImages = [
+                  ...(this.settings.uploadedImages || []),
+                  ...uploadUrlFullResultList,
+                ];
+                await this.saveSettings();
                 return url;
               },
               evt.clipboardData
@@ -546,6 +639,12 @@ export default class imageAutoUploadPlugin extends Plugin {
             const data = await this.uploader.uploadFiles(sendFiles);
 
             if (data.success) {
+              const uploadUrlFullResultList = data.fullResult ?? [];
+              this.settings.uploadedImages = [
+                ...(this.settings.uploadedImages ?? []),
+                ...uploadUrlFullResultList,
+              ];
+              this.saveSettings();
               data.result.map((value: string) => {
                 let pasteId = (Math.random() + 1).toString(36).substr(2, 5);
                 this.insertTemporaryText(editor, pasteId);

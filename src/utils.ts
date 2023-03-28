@@ -2,6 +2,10 @@ import { resolve, extname, relative, join, parse, posix } from "path";
 import { Readable } from "stream";
 import { clipboard } from "electron";
 
+export interface IStringKeyMap<T> {
+  [key: string]: T;
+}
+
 const IMAGE_EXT_LIST = [
   ".png",
   ".jpg",
