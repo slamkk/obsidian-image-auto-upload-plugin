@@ -235,7 +235,7 @@ export default class imageAutoUploadPlugin extends Plugin {
     imageArray.map(image => {
       value = value.replace(
         image.source,
-        `![${image.name}](${encodeURI(image.path)})`
+        `![${image.name}${this.settings.imageSizeSuffix || ""}](${encodeURI(image.path)})`
       );
     });
 
@@ -368,7 +368,7 @@ export default class imageAutoUploadPlugin extends Plugin {
           const uploadImage = uploadUrlList.shift();
           content = content.replaceAll(
             item.source,
-            `![${item.name}](${uploadImage})`
+            `![${item.name}${this.settings.imageSizeSuffix || ""}](${uploadImage})`
           );
         });
         this.helper.setValue(content);
@@ -514,7 +514,7 @@ export default class imageAutoUploadPlugin extends Plugin {
           const uploadImage = uploadUrlList.shift();
           content = content.replaceAll(
             item.source,
-            `![${item.name}](${uploadImage})`
+            `![${item.name}${this.settings.imageSizeSuffix || ""}](${uploadImage})`
           );
         });
         this.helper.setValue(content);
@@ -571,7 +571,7 @@ export default class imageAutoUploadPlugin extends Plugin {
                       const uploadImage = uploadUrlList.shift();
                       value = value.replaceAll(
                         item.source,
-                        `![${item.name}](${uploadImage})`
+                        `![${item.name}${this.settings.imageSizeSuffix || ""}](${uploadImage})`
                       );
                     });
                     this.helper.setValue(value);
@@ -685,6 +685,8 @@ export default class imageAutoUploadPlugin extends Plugin {
     let pasteId = (Math.random() + 1).toString(36).substr(2, 5);
     this.insertTemporaryText(editor, pasteId);
     const name = clipboardData.files[0].name;
+    console.log(clipboardData.files[0])
+    console.log(name)
     try {
       const url = await callback(editor, pasteId);
       this.embedMarkDownImage(editor, pasteId, url, name);
@@ -709,7 +711,8 @@ export default class imageAutoUploadPlugin extends Plugin {
     name: string = ""
   ) {
     let progressText = imageAutoUploadPlugin.progressTextFor(pasteId);
-    let markDownImage = `![${name}](${imageUrl})`;
+    const imageSizeSuffix = this.settings.imageSizeSuffix || "";
+    let markDownImage = `![${name}${imageSizeSuffix}](${imageUrl})`;
 
     imageAutoUploadPlugin.replaceFirstOccurrence(
       editor,

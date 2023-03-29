@@ -7,6 +7,7 @@ export interface PluginSettings {
   uploadByClipSwitch: boolean;
   uploadServer: string;
   deleteServer: string;
+  imageSizeSuffix: string;
   uploader: string;
   picgoCorePath: string;
   workOnNetWork: boolean;
@@ -22,6 +23,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   uploader: "PicGo",
   uploadServer: "http://127.0.0.1:36677/upload",
   deleteServer: "http://127.0.0.1:36677/delete",
+  imageSizeSuffix: "",
   picgoCorePath: "",
   workOnNetWork: false,
   fixPath: false,
@@ -100,6 +102,19 @@ export class SettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.deleteServer)
           .onChange(async key => {
             this.plugin.settings.deleteServer = key;
+            await this.plugin.saveSettings();
+          })
+      );
+
+      new Setting(containerEl)
+      .setName(t("Image size suffix"))
+      .setDesc(t("Image size suffix"))
+      .addText(text =>
+        text
+          .setPlaceholder(t("Please input image size suffix"))
+          .setValue(this.plugin.settings.imageSizeSuffix)
+          .onChange(async key => {
+            this.plugin.settings.imageSizeSuffix = key;
             await this.plugin.saveSettings();
           })
       );

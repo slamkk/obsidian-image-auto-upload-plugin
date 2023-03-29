@@ -16,6 +16,8 @@ export default {
   "PicGo-Core path": "PicGo-Core path",
   "Delete successfully": "Delete successfully",
   "Delete failed": "Delete failed",
+  "Image size suffix": "Image size suffix",
+  "Please input image size suffix": "Please input image size suffix",
   "Error, could not delete": "Error, could not delete",
   "Please input PicGo-Core path, default using environment variables":
     "Please input PicGo-Core path, default using environment variables",
