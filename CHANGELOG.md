@@ -108,3 +108,8 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 # 3.2.1
 
 1. 优化上传所有图片指令的路径解析
+
+# 3.3.0
+
+1. 新增了添加图片预览大小后缀的支持
+2. 针对 PicList 的快速删除功能
