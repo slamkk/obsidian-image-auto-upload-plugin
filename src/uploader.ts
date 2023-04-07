@@ -3,10 +3,11 @@ import { streamToString, getLastImage } from "./utils";
 import { exec } from "child_process";
 import { Notice, requestUrl } from "obsidian";
 
-interface PicGoResponse {
+export interface PicGoResponse {
   success: string;
   msg: string;
   result: string[];
+  fullResult: Record<string, any>[];
 }
 
 export class PicGoUploader {
@@ -48,6 +49,7 @@ export class PicGoUploader {
         code: 0,
         msg: "success",
         data: typeof data.result == "string" ? data.result : data.result[0],
+        fullResult: data.fullResult || [],
       };
     }
   }

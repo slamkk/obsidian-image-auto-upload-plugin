@@ -6,6 +6,8 @@ import { getOS } from "./utils";
 export interface PluginSettings {
   uploadByClipSwitch: boolean;
   uploadServer: string;
+  deleteServer: string;
+  imageSizeSuffix: string;
   uploader: string;
   picgoCorePath: string;
   workOnNetWork: boolean;
@@ -13,12 +15,15 @@ export interface PluginSettings {
   fixPath: boolean;
   applyImage: boolean;
   deleteSource: boolean;
+  [propName: string]: any;
 }
 
 export const DEFAULT_SETTINGS: PluginSettings = {
   uploadByClipSwitch: true,
   uploader: "PicGo",
   uploadServer: "http://127.0.0.1:36677/upload",
+  deleteServer: "http://127.0.0.1:36677/delete",
+  imageSizeSuffix: "",
   picgoCorePath: "",
   workOnNetWork: false,
   fixPath: false,
@@ -87,6 +92,32 @@ export class SettingTab extends PluginSettingTab {
             })
         );
     }
+
+    new Setting(containerEl)
+      .setName(t("PicGo delete server"))
+      .setDesc(t("PicList desc"))
+      .addText(text =>
+        text
+          .setPlaceholder(t("Please input PicGo delete server"))
+          .setValue(this.plugin.settings.deleteServer)
+          .onChange(async key => {
+            this.plugin.settings.deleteServer = key;
+            await this.plugin.saveSettings();
+          })
+      );
+
+      new Setting(containerEl)
+      .setName(t("Image size suffix"))
+      .setDesc(t("Image size suffix"))
+      .addText(text =>
+        text
+          .setPlaceholder(t("Please input image size suffix"))
+          .setValue(this.plugin.settings.imageSizeSuffix)
+          .onChange(async key => {
+            this.plugin.settings.imageSizeSuffix = key;
+            await this.plugin.saveSettings();
+          })
+      );
 
     if (this.plugin.settings.uploader === "PicGo-Core") {
       new Setting(containerEl)
