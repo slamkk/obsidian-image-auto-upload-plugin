@@ -106,9 +106,9 @@ export class SettingTab extends PluginSettingTab {
           })
       );
 
-      new Setting(containerEl)
+    new Setting(containerEl)
       .setName(t("Image size suffix"))
-      .setDesc(t("Image size suffix"))
+      .setDesc(t("Image size suffix Description"))
       .addText(text =>
         text
           .setPlaceholder(t("Please input image size suffix"))

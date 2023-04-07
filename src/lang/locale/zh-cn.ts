@@ -18,6 +18,7 @@ export default {
   "Delete failed": "删除失败",
   "Error, could not delete": "错误，无法删除",
   "Image size suffix": "图片大小后缀",
+  "Image size suffix Description": "比如：|300 用于调整图片大小",
   "Please input image size suffix": "请输入图片大小后缀",
   "Please input PicGo-Core path, default using environment variables":
     "请输入 PicGo-Core path，默认使用环境变量",

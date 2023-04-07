@@ -9,7 +9,8 @@ export default {
   "Default uploader": "Default uploader",
   "PicGo server": "PicGo server",
   "Please input PicGo server": "Please input PicGo server",
-  "PicGo delete server": "PicGo server delete route(you need to use PicList app)",
+  "PicGo delete server":
+    "PicGo server delete route(you need to use PicList app)",
   "PicList desc": "Search PicList on Github to download and install",
   "Please input PicGo delete server": "Please input PicGo delete server",
   "Delete image using PicList": "Delete image using PicList",
@@ -17,6 +18,7 @@ export default {
   "Delete successfully": "Delete successfully",
   "Delete failed": "Delete failed",
   "Image size suffix": "Image size suffix",
+  "Image size suffix Description": "like |300 for resize image in ob.",
   "Please input image size suffix": "Please input image size suffix",
   "Error, could not delete": "Error, could not delete",
   "Please input PicGo-Core path, default using environment variables":
