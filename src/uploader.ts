@@ -26,6 +26,7 @@ export class PicGoUploader {
     });
 
     const data = response.json;
+
     return data;
   }
 
@@ -36,7 +37,6 @@ export class PicGoUploader {
     });
 
     let data: PicGoResponse = res.json;
-
     if (res.status !== 200) {
       let err = { response: data, body: data.msg };
       return {

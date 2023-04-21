@@ -360,7 +360,7 @@ export default class imageAutoUploadPlugin extends Plugin {
     this.uploader.uploadFiles(imageList.map(item => item.path)).then(res => {
       if (res.success) {
         let uploadUrlList = res.result;
-        const uploadUrlFullResultList = res.resultFull || [];
+        const uploadUrlFullResultList = res.fullResult || [];
         this.settings.uploadedImages = [
           ...(this.settings.uploadedImages || []),
           ...uploadUrlFullResultList,
@@ -508,7 +508,8 @@ export default class imageAutoUploadPlugin extends Plugin {
     this.uploader.uploadFiles(imageList.map(item => item.path)).then(res => {
       if (res.success) {
         let uploadUrlList = res.result;
-        const uploadUrlFullResultList = res.resultFull || [];
+        const uploadUrlFullResultList = res.fullResult || [];
+
         this.settings.uploadedImages = [
           ...(this.settings.uploadedImages || []),
           ...uploadUrlFullResultList,
