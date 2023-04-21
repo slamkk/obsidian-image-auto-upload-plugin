@@ -394,18 +394,20 @@ export default class imageAutoUploadPlugin extends Plugin {
     const imageList: Image[] = [];
 
     for (const match of fileArray) {
-      if (this.settings.workOnNetWork && match.path.startsWith("http")) {
-        if (
-          !this.helper.hasBlackDomain(
-            match.path,
-            this.settings.newWorkBlackDomains
-          )
-        ) {
-          imageList.push({
-            path: match.path,
-            name: match.name,
-            source: match.source,
-          });
+      if (match.path.startsWith("http")) {
+        if (this.settings.workOnNetWork) {
+          if (
+            !this.helper.hasBlackDomain(
+              match.path,
+              this.settings.newWorkBlackDomains
+            )
+          ) {
+            imageList.push({
+              path: match.path,
+              name: match.name,
+              source: match.source,
+            });
+          }
         }
       } else {
         imageList.push({

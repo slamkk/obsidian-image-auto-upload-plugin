@@ -117,3 +117,5 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 # 3.3.1
 
 1. 修改下载文件后的命名问题
+2. 修复使用 PicList 批量上传无法删除图片的 bug [#94](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/94)
+3. 修复应用网络图片选项失效的问题 [#93](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/93)
