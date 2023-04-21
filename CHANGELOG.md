@@ -113,3 +113,7 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 
 1. 新增了添加图片预览大小后缀的支持
 2. 针对 PicList 的快速删除功能
+
+# 3.3.1
+
+1. 修改下载文件后的命名问题

@@ -207,7 +207,7 @@ export default class imageAutoUploadPlugin extends Plugin {
       if (existsSync(join(folderPath, encodeURI(asset)))) {
         name = (Math.random() + 1).toString(36).substr(2, 5);
       }
-      name = `image-${name}`;
+      // name = `image-${name}`;
 
       const response = await this.download(
         url,
