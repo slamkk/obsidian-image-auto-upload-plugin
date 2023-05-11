@@ -128,3 +128,7 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 
 1. 下载功能优化，不再根据 url 的后缀进行判断，现在根据页面返回的 arraybuffer 的头来进行判断，兼容更多图片下载。 [#96](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/96)
 2. 更新依赖版本
+
+# 3.4.1
+
+1. 过滤空黑名单规则 [#98](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/98)

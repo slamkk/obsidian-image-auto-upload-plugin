@@ -102,7 +102,7 @@ export default class Helper {
     if (blackDomains.trim() === "") {
       return false;
     }
-    const blackDomainList = blackDomains.split(",");
+    const blackDomainList = blackDomains.split(",").filter(item => item !== "");
     let url = new URL(src);
     const domain = url.hostname;
 
