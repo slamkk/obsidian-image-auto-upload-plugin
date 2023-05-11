@@ -17,7 +17,7 @@ import { resolve, relative, join, parse, posix, basename, dirname } from "path";
 import { existsSync, mkdirSync, writeFileSync, unlink } from "fs";
 
 import fixPath from "fix-path";
-import imageType, { minimumBytes } from "image-type";
+import imageType from "image-type";
 
 import {
   isAssetTypeAnImage,
@@ -191,8 +191,6 @@ export default class imageAutoUploadPlugin extends Plugin {
 
     let imageArray = [];
     for (const file of fileArray) {
-      console.log(file);
-
       if (!file.path.startsWith("http")) {
         continue;
       }
@@ -206,16 +204,14 @@ export default class imageAutoUploadPlugin extends Plugin {
         decodeURI(parse(asset).name).replaceAll(/[\\\\/:*?\"<>|]/g, "-"),
         parse(asset).ext,
       ];
+
       // 如果文件名已存在，则用随机值替换
       if (existsSync(join(folderPath, encodeURI(asset)))) {
         name = (Math.random() + 1).toString(36).substr(2, 5);
       }
       // name = `image-${name}`;
 
-      const response = await this.download(
-        url,
-        join(folderPath, `${name}${ext}`)
-      );
+      const response = await this.download(url, folderPath, name, ext);
 
       if (response.ok) {
         const activeFolder = this.app.vault.getAbstractFileByPath(
@@ -276,11 +272,9 @@ export default class imageAutoUploadPlugin extends Plugin {
     }
   }
 
-  async download(url: string, path: string) {
+  async download(url: string, folderPath: string, name: string, ext: string) {
     const response = await requestUrl({ url });
-    // console.log(response);
-    // const type = await imageType(new Uint8Array(response.arrayBuffer));
-    // console.log(type);
+    const type = await imageType(new Uint8Array(response.arrayBuffer));
 
     if (response.status !== 200) {
       return {
@@ -288,20 +282,28 @@ export default class imageAutoUploadPlugin extends Plugin {
         msg: "error",
       };
     }
-    if (response.headers["content-type"]?.indexOf("image") === -1) {
+    if (!type) {
       return {
         ok: false,
         msg: "error",
       };
     }
+
     const buffer = Buffer.from(response.arrayBuffer);
 
     try {
+      let path = join(folderPath, `${name}${ext}`);
+
+      if (!ext) {
+        path = join(folderPath, `${name}.${type.ext}`);
+      }
+
       writeFileSync(path, buffer);
       return {
         ok: true,
         msg: "ok",
         path: path,
+        type,
       };
     } catch (err) {
       console.error(err);
