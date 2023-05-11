@@ -6,7 +6,9 @@ interface Image {
   name: string;
   source: string;
 }
-const REGEX_FILE = /\!\[(.*?)\]\((\S+\.\w+)\)/g;
+// ![](./dsa/aa.png) local image should has ext
+// ![](https://dasdasda) internet image should not has ext
+const REGEX_FILE = /\!\[(.*?)\]\((\S+\.\w+)\)|\!\[(.*?)\]\((https?:\/\/.*?)\)/g;
 const REGEX_WIKI_FILE = /\!\[\[(.*?)(\s\|.*?)?\]\]/g;
 export default class Helper {
   app: App;
@@ -65,11 +67,16 @@ export default class Helper {
     let fileArray: Image[] = [];
 
     for (const match of matches) {
-      console.log(match);
-
-      const name = match[1];
-      const path = match[2];
       const source = match[0];
+
+      let name = match[1];
+      let path = match[2];
+      if (name === undefined) {
+        name = match[3];
+      }
+      if (path === undefined) {
+        path = match[4];
+      }
 
       fileArray.push({
         path: path,

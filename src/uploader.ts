@@ -72,7 +72,6 @@ export class PicGoCoreUploader {
     const res = await this.exec(command);
     const splitList = res.split("\n");
     const splitListLength = splitList.length;
-    console.log(splitListLength);
 
     const data = splitList.splice(splitListLength - 1 - length, length);
 

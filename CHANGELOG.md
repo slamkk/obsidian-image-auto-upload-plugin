@@ -123,3 +123,5 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 # 3.3.2
 
 1. 更新匹配正则
+
+# 3.4.0

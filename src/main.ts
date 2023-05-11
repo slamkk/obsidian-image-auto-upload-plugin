@@ -17,6 +17,7 @@ import { resolve, relative, join, parse, posix, basename, dirname } from "path";
 import { existsSync, mkdirSync, writeFileSync, unlink } from "fs";
 
 import fixPath from "fix-path";
+import imageType, { minimumBytes } from "image-type";
 
 import {
   isAssetTypeAnImage,
@@ -190,15 +191,17 @@ export default class imageAutoUploadPlugin extends Plugin {
 
     let imageArray = [];
     for (const file of fileArray) {
+      console.log(file);
+
       if (!file.path.startsWith("http")) {
         continue;
       }
 
       const url = file.path;
       const asset = getUrlAsset(url);
-      if (!isAnImage(asset.substr(asset.lastIndexOf(".")))) {
-        continue;
-      }
+      // if (!isAnImage(asset.substr(asset.lastIndexOf(".")))) {
+      //   continue;
+      // }
       let [name, ext] = [
         decodeURI(parse(asset).name).replaceAll(/[\\\\/:*?\"<>|]/g, "-"),
         parse(asset).ext,
@@ -213,6 +216,7 @@ export default class imageAutoUploadPlugin extends Plugin {
         url,
         join(folderPath, `${name}${ext}`)
       );
+
       if (response.ok) {
         const activeFolder = this.app.vault.getAbstractFileByPath(
           this.app.workspace.getActiveFile().path
@@ -274,8 +278,17 @@ export default class imageAutoUploadPlugin extends Plugin {
 
   async download(url: string, path: string) {
     const response = await requestUrl({ url });
+    // console.log(response);
+    // const type = await imageType(new Uint8Array(response.arrayBuffer));
+    // console.log(type);
 
     if (response.status !== 200) {
+      return {
+        ok: false,
+        msg: "error",
+      };
+    }
+    if (response.headers["content-type"]?.indexOf("image") === -1) {
       return {
         ok: false,
         msg: "error",
@@ -731,6 +744,7 @@ export default class imageAutoUploadPlugin extends Plugin {
   }
 
   handleFailedUpload(editor: Editor, pasteId: string, reason: any) {
+    new Notice(reason);
     console.error("Failed request: ", reason);
     let progressText = imageAutoUploadPlugin.progressTextFor(pasteId);
     imageAutoUploadPlugin.replaceFirstOccurrence(
