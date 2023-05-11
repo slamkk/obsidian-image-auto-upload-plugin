@@ -6,9 +6,8 @@ interface Image {
   name: string;
   source: string;
 }
-const REGEX_FILE = /\!\[(.*?)\]\((.*?)\)/g;
+const REGEX_FILE = /\!\[(.*?)\]\((\S+\.\w+)\)/g;
 const REGEX_WIKI_FILE = /\!\[\[(.*?)(\s\|.*?)?\]\]/g;
-
 export default class Helper {
   app: App;
 
@@ -66,6 +65,8 @@ export default class Helper {
     let fileArray: Image[] = [];
 
     for (const match of matches) {
+      console.log(match);
+
       const name = match[1];
       const path = match[2];
       const source = match[0];
