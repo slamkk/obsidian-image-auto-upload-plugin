@@ -132,3 +132,8 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 # 3.4.1
 
 1. 过滤空黑名单规则 [#98](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/98)
+
+# 3.4.2
+
+1. 下载时重命名相同名称文件防止覆盖
+2. 修复根目录下的文件下载失败

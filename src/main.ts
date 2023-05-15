@@ -190,6 +190,7 @@ export default class imageAutoUploadPlugin extends Plugin {
     }
 
     let imageArray = [];
+    const nameSet = new Set();
     for (const file of fileArray) {
       if (!file.path.startsWith("http")) {
         continue;
@@ -210,6 +211,10 @@ export default class imageAutoUploadPlugin extends Plugin {
         name = (Math.random() + 1).toString(36).substr(2, 5);
       }
       // name = `image-${name}`;
+      if (nameSet.has(name)) {
+        name = `${name}-${(Math.random() + 1).toString(36).substr(2, 5)}`;
+      }
+      nameSet.add(name);
 
       const response = await this.download(url, folderPath, name, ext);
 
@@ -222,7 +227,6 @@ export default class imageAutoUploadPlugin extends Plugin {
           this.app.vault.adapter as FileSystemAdapter
         ).getBasePath();
         const abstractActiveFolder = resolve(basePath, activeFolder);
-
         imageArray.push({
           source: file.source,
           name: name,
