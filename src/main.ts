@@ -198,35 +198,29 @@ export default class imageAutoUploadPlugin extends Plugin {
 
       const url = file.path;
       const asset = getUrlAsset(url);
-      // if (!isAnImage(asset.substr(asset.lastIndexOf(".")))) {
-      //   continue;
-      // }
-      let [name, ext] = [
-        decodeURI(parse(asset).name).replaceAll(/[\\\\/:*?\"<>|]/g, "-"),
-        parse(asset).ext,
-      ];
+      let name = decodeURI(parse(asset).name).replaceAll(
+        /[\\\\/:*?\"<>|]/g,
+        "-"
+      );
 
-      // 如果文件名已存在，则用随机值替换
-      if (existsSync(join(folderPath, encodeURI(asset)))) {
+      // 如果文件名已存在，则用随机值替换，不对文件后缀进行判断
+      if (existsSync(join(folderPath))) {
         name = (Math.random() + 1).toString(36).substr(2, 5);
       }
-      // name = `image-${name}`;
       if (nameSet.has(name)) {
         name = `${name}-${(Math.random() + 1).toString(36).substr(2, 5)}`;
       }
       nameSet.add(name);
 
-      const response = await this.download(url, folderPath, name, ext);
-
+      const response = await this.download(url, folderPath, name);
       if (response.ok) {
-        const activeFolder = this.app.vault.getAbstractFileByPath(
-          this.app.workspace.getActiveFile().path
-        ).parent.path;
-
-        const basePath = (
+        const activeFolder = normalizePath(
+          this.app.workspace.getActiveFile().parent.path
+        );
+        const abstractActiveFolder = (
           this.app.vault.adapter as FileSystemAdapter
-        ).getBasePath();
-        const abstractActiveFolder = resolve(basePath, activeFolder);
+        ).getFullPath(activeFolder);
+
         imageArray.push({
           source: file.source,
           name: name,
@@ -276,7 +270,7 @@ export default class imageAutoUploadPlugin extends Plugin {
     }
   }
 
-  async download(url: string, folderPath: string, name: string, ext: string) {
+  async download(url: string, folderPath: string, name: string) {
     const response = await requestUrl({ url });
     const type = await imageType(new Uint8Array(response.arrayBuffer));
 
@@ -296,11 +290,7 @@ export default class imageAutoUploadPlugin extends Plugin {
     const buffer = Buffer.from(response.arrayBuffer);
 
     try {
-      let path = join(folderPath, `${name}${ext}`);
-
-      if (!ext) {
-        path = join(folderPath, `${name}.${type.ext}`);
-      }
+      const path = join(folderPath, `${name}.${type.ext}`);
 
       writeFileSync(path, buffer);
       return {
