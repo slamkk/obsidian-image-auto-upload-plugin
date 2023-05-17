@@ -76,6 +76,8 @@ export class PicGoCoreUploader {
     const data = splitList.splice(splitListLength - 1 - length, length);
 
     if (res.includes("PicGo ERROR")) {
+      console.log(command, res);
+
       return {
         success: false,
         msg: "失败",
