@@ -137,3 +137,7 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 
 1. 下载时重命名相同名称文件防止覆盖
 2. 修复在根目录下的文件使用下载指令失败
+
+# 3.5.0
+1. 下载支持异步
+2. 应用网络图片增加描述
