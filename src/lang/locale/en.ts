@@ -40,4 +40,8 @@ export default {
     "Delete source file after you upload file",
   "Delete source file in ob assets after you upload file.":
     "Delete source file in ob assets after you upload file.",
+  "Image desc": "Image desc",
+  reserve: "default",
+  "remove all": "none",
+  "remove default": "remove image.png",
 };

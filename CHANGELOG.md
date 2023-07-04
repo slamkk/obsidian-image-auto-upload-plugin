@@ -139,5 +139,11 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 2. 修复在根目录下的文件使用下载指令失败
 
 # 3.5.0
-1. 下载支持异步
-2. 应用网络图片增加描述
+
+<!-- 1. 下载支持异步 -->
+<!-- 2. 应用网络图片增加描述 -->
+
+1. 配置为 picgo-core 时不显示 piclist 的专有配置项
+2. 增加配置项用于处理图片描述[#91](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/91)
+3. 在 canvas 图片右键菜单中不显示 upload 菜单
+4. 尝试性修复[#103](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/103)，我也不知道行不行

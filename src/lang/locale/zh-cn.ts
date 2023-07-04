@@ -38,4 +38,8 @@ export default {
   "Delete source file after you upload file": "上传文件后移除源文件",
   "Delete source file in ob assets after you upload file.":
     "上传文件后移除在ob附件文件夹中的文件",
+  "Image desc": "图片描述",
+  reserve: "默认",
+  "remove all": "无",
+  "remove default": "移除image.png",
 };

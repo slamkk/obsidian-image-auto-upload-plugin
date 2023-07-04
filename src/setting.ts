@@ -15,6 +15,7 @@ export interface PluginSettings {
   fixPath: boolean;
   applyImage: boolean;
   deleteSource: boolean;
+  imageDesc: "origin" | "none" | "removeDefault";
   [propName: string]: any;
 }
 
@@ -30,6 +31,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   applyImage: true,
   newWorkBlackDomains: "",
   deleteSource: false,
+  imageDesc: "origin",
 };
 
 export class SettingTab extends PluginSettingTab {
@@ -91,33 +93,20 @@ export class SettingTab extends PluginSettingTab {
               await this.plugin.saveSettings();
             })
         );
+
+      new Setting(containerEl)
+        .setName(t("PicGo delete server"))
+        .setDesc(t("PicList desc"))
+        .addText(text =>
+          text
+            .setPlaceholder(t("Please input PicGo delete server"))
+            .setValue(this.plugin.settings.deleteServer)
+            .onChange(async key => {
+              this.plugin.settings.deleteServer = key;
+              await this.plugin.saveSettings();
+            })
+        );
     }
-
-    new Setting(containerEl)
-      .setName(t("PicGo delete server"))
-      .setDesc(t("PicList desc"))
-      .addText(text =>
-        text
-          .setPlaceholder(t("Please input PicGo delete server"))
-          .setValue(this.plugin.settings.deleteServer)
-          .onChange(async key => {
-            this.plugin.settings.deleteServer = key;
-            await this.plugin.saveSettings();
-          })
-      );
-
-    new Setting(containerEl)
-      .setName(t("Image size suffix"))
-      .setDesc(t("Image size suffix Description"))
-      .addText(text =>
-        text
-          .setPlaceholder(t("Please input image size suffix"))
-          .setValue(this.plugin.settings.imageSizeSuffix)
-          .onChange(async key => {
-            this.plugin.settings.imageSizeSuffix = key;
-            await this.plugin.saveSettings();
-          })
-      );
 
     if (this.plugin.settings.uploader === "PicGo-Core") {
       new Setting(containerEl)
@@ -149,6 +138,36 @@ export class SettingTab extends PluginSettingTab {
           );
       }
     }
+
+    // image desc setting
+    new Setting(containerEl)
+      .setName(t("Image desc"))
+      .setDesc(t("Image desc"))
+      .addDropdown(cb =>
+        cb
+          .addOption("origin", t("reserve")) // 保留全部
+          .addOption("none", t("remove all")) // 移除全部
+          .addOption("removeDefault", t("remove default")) // 只移除默认即 image.png
+          .setValue(this.plugin.settings.imageDesc)
+          .onChange(async (value: "origin" | "none" | "removeDefault") => {
+            this.plugin.settings.imageDesc = value;
+            this.display();
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName(t("Image size suffix"))
+      .setDesc(t("Image size suffix Description"))
+      .addText(text =>
+        text
+          .setPlaceholder(t("Please input image size suffix"))
+          .setValue(this.plugin.settings.imageSizeSuffix)
+          .onChange(async key => {
+            this.plugin.settings.imageSizeSuffix = key;
+            await this.plugin.saveSettings();
+          })
+      );
 
     new Setting(containerEl)
       .setName(t("Work on network"))

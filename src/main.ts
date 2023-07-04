@@ -61,9 +61,9 @@ export default class imageAutoUploadPlugin extends Plugin {
     await this.loadSettings();
 
     this.helper = new Helper(this.app);
-    this.picGoUploader = new PicGoUploader(this.settings);
+    this.picGoUploader = new PicGoUploader(this.settings, this);
     this.picGoDeleter = new PicGoDeleter(this);
-    this.picGoCoreUploader = new PicGoCoreUploader(this.settings);
+    this.picGoCoreUploader = new PicGoCoreUploader(this.settings, this);
 
     if (this.settings.uploader === "PicGo") {
       this.uploader = this.picGoUploader;
@@ -231,11 +231,11 @@ export default class imageAutoUploadPlugin extends Plugin {
 
     let value = this.helper.getValue();
     imageArray.map(image => {
+      let name = this.handleName(image.name);
+
       value = value.replace(
         image.source,
-        `![${image.name}${this.settings.imageSizeSuffix || ""}](${encodeURI(
-          image.path
-        )})`
+        `![${name}](${encodeURI(image.path)})`
       );
     });
 
@@ -300,8 +300,6 @@ export default class imageAutoUploadPlugin extends Plugin {
         type,
       };
     } catch (err) {
-      console.error(err);
-
       return {
         ok: false,
         msg: err,
@@ -313,10 +311,10 @@ export default class imageAutoUploadPlugin extends Plugin {
     this.registerEvent(
       this.app.workspace.on(
         "file-menu",
-        (menu: Menu, file: TFile, source: string) => {
-          if (!isAssetTypeAnImage(file.path)) {
-            return false;
-          }
+        (menu: Menu, file: TFile, source: string, leaf) => {
+          if (source === "canvas-menu") return false;
+          if (!isAssetTypeAnImage(file.path)) return false;
+
           menu.addItem((item: MenuItem) => {
             item
               .setTitle("Upload")
@@ -369,19 +367,13 @@ export default class imageAutoUploadPlugin extends Plugin {
     this.uploader.uploadFiles(imageList.map(item => item.path)).then(res => {
       if (res.success) {
         let uploadUrlList = res.result;
-        const uploadUrlFullResultList = res.fullResult || [];
-        this.settings.uploadedImages = [
-          ...(this.settings.uploadedImages || []),
-          ...uploadUrlFullResultList,
-        ];
-        this.saveSettings();
         imageList.map(item => {
           const uploadImage = uploadUrlList.shift();
+          let name = this.handleName(item.name);
+
           content = content.replaceAll(
             item.source,
-            `![${item.name}${
-              this.settings.imageSizeSuffix || ""
-            }](${uploadImage})`
+            `![${name}](${uploadImage})`
           );
         });
         this.helper.setValue(content);
@@ -519,20 +511,14 @@ export default class imageAutoUploadPlugin extends Plugin {
     this.uploader.uploadFiles(imageList.map(item => item.path)).then(res => {
       if (res.success) {
         let uploadUrlList = res.result;
-        const uploadUrlFullResultList = res.fullResult || [];
 
-        this.settings.uploadedImages = [
-          ...(this.settings.uploadedImages || []),
-          ...uploadUrlFullResultList,
-        ];
-        this.saveSettings();
         imageList.map(item => {
           const uploadImage = uploadUrlList.shift();
+
+          let name = this.handleName(item.name);
           content = content.replaceAll(
             item.source,
-            `![${item.name}${
-              this.settings.imageSizeSuffix || ""
-            }](${uploadImage})`
+            `![${name}](${uploadImage})`
           );
         });
         this.helper.setValue(content);
@@ -564,6 +550,7 @@ export default class imageAutoUploadPlugin extends Plugin {
           if (!allowUpload) {
             return;
           }
+
           // 剪贴板内容有md格式的图片时
           if (this.settings.workOnNetWork) {
             const clipboardValue = evt.clipboardData.getData("text/plain");
@@ -587,20 +574,14 @@ export default class imageAutoUploadPlugin extends Plugin {
                     let uploadUrlList = res.result;
                     imageList.map(item => {
                       const uploadImage = uploadUrlList.shift();
+                      let name = this.handleName(item.name);
+
                       value = value.replaceAll(
                         item.source,
-                        `![${item.name}${
-                          this.settings.imageSizeSuffix || ""
-                        }](${uploadImage})`
+                        `![${name}](${uploadImage})`
                       );
                     });
                     this.helper.setValue(value);
-                    const uploadUrlFullResultList = res.fullResult || [];
-                    this.settings.uploadedImages = [
-                      ...(this.settings.uploadedImages || []),
-                      ...uploadUrlFullResultList,
-                    ];
-                    this.saveSettings();
                   } else {
                     new Notice("Upload error");
                   }
@@ -619,12 +600,7 @@ export default class imageAutoUploadPlugin extends Plugin {
                   return;
                 }
                 const url = res.data;
-                const uploadUrlFullResultList = res.fullResult || [];
-                this.settings.uploadedImages = [
-                  ...(this.settings.uploadedImages || []),
-                  ...uploadUrlFullResultList,
-                ];
-                await this.saveSettings();
+
                 return url;
               },
               evt.clipboardData
@@ -659,12 +635,6 @@ export default class imageAutoUploadPlugin extends Plugin {
             const data = await this.uploader.uploadFiles(sendFiles);
 
             if (data.success) {
-              const uploadUrlFullResultList = data.fullResult ?? [];
-              this.settings.uploadedImages = [
-                ...(this.settings.uploadedImages ?? []),
-                ...uploadUrlFullResultList,
-              ];
-              this.saveSettings();
               data.result.map((value: string) => {
                 let pasteId = (Math.random() + 1).toString(36).substr(2, 5);
                 this.insertTemporaryText(editor, pasteId);
@@ -705,6 +675,7 @@ export default class imageAutoUploadPlugin extends Plugin {
     let pasteId = (Math.random() + 1).toString(36).substr(2, 5);
     this.insertTemporaryText(editor, pasteId);
     const name = clipboardData.files[0].name;
+
     try {
       const url = await callback(editor, pasteId);
       this.embedMarkDownImage(editor, pasteId, url, name);
@@ -729,8 +700,9 @@ export default class imageAutoUploadPlugin extends Plugin {
     name: string = ""
   ) {
     let progressText = imageAutoUploadPlugin.progressTextFor(pasteId);
-    const imageSizeSuffix = this.settings.imageSizeSuffix || "";
-    let markDownImage = `![${name}${imageSizeSuffix}](${imageUrl})`;
+    name = this.handleName(name);
+
+    let markDownImage = `![${name}](${imageUrl})`;
 
     imageAutoUploadPlugin.replaceFirstOccurrence(
       editor,
@@ -748,6 +720,24 @@ export default class imageAutoUploadPlugin extends Plugin {
       progressText,
       "⚠️upload failed, check dev console"
     );
+  }
+
+  handleName(name: string) {
+    const imageSizeSuffix = this.settings.imageSizeSuffix || "";
+
+    if (this.settings.imageDesc === "origin") {
+      return `${name}${imageSizeSuffix}`;
+    } else if (this.settings.imageDesc === "none") {
+      return "";
+    } else if (this.settings.imageDesc === "removeDefault") {
+      if (name === "image.png") {
+        return "";
+      } else {
+        return `${name}${imageSizeSuffix}`;
+      }
+    } else {
+      return `${name}${imageSizeSuffix}`;
+    }
   }
 
   static replaceFirstOccurrence(

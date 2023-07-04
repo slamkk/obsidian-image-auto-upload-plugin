@@ -1,7 +1,8 @@
 import { PluginSettings } from "./setting";
 import { streamToString, getLastImage } from "./utils";
-import { exec } from "child_process";
+import { exec, spawnSync, spawn } from "child_process";
 import { Notice, requestUrl } from "obsidian";
+import imageAutoUploadPlugin from "./main";
 
 export interface PicGoResponse {
   success: string;
@@ -12,9 +13,11 @@ export interface PicGoResponse {
 
 export class PicGoUploader {
   settings: PluginSettings;
+  plugin: imageAutoUploadPlugin;
 
-  constructor(settings: PluginSettings) {
+  constructor(settings: PluginSettings, plugin: imageAutoUploadPlugin) {
     this.settings = settings;
+    this.plugin = plugin;
   }
 
   async uploadFiles(fileList: Array<String>): Promise<any> {
@@ -25,7 +28,16 @@ export class PicGoUploader {
       body: JSON.stringify({ list: fileList }),
     });
 
-    const data = response.json;
+    const data = await response.json;
+
+    // piclist
+    if (data.fullResult) {
+      const uploadUrlFullResultList = data.fullResult || [];
+      this.settings.uploadedImages = [
+        ...(this.settings.uploadedImages || []),
+        ...uploadUrlFullResultList,
+      ];
+    }
 
     return data;
   }
@@ -36,7 +48,18 @@ export class PicGoUploader {
       method: "POST",
     });
 
-    let data: PicGoResponse = res.json;
+    let data: PicGoResponse = await res.json;
+
+    // piclist
+    if (data.fullResult) {
+      const uploadUrlFullResultList = data.fullResult || [];
+      this.settings.uploadedImages = [
+        ...(this.settings.uploadedImages || []),
+        ...uploadUrlFullResultList,
+      ];
+      this.plugin.saveSettings();
+    }
+
     if (res.status !== 200) {
       let err = { response: data, body: data.msg };
       return {
@@ -49,7 +72,6 @@ export class PicGoUploader {
         code: 0,
         msg: "success",
         data: typeof data.result == "string" ? data.result : data.result[0],
-        fullResult: data.fullResult || [],
       };
     }
   }
@@ -57,9 +79,11 @@ export class PicGoUploader {
 
 export class PicGoCoreUploader {
   settings: PluginSettings;
+  plugin: imageAutoUploadPlugin;
 
-  constructor(settings: PluginSettings) {
+  constructor(settings: PluginSettings, plugin: imageAutoUploadPlugin) {
     this.settings = settings;
+    this.plugin = plugin;
   }
 
   async uploadFiles(fileList: Array<String>): Promise<any> {
@@ -104,7 +128,9 @@ export class PicGoCoreUploader {
         data: lastImage,
       };
     } else {
-      new Notice(`"Please check PicGo-Core config"\n${res}`);
+      console.log(splitList);
+
+      // new Notice(`"Please check PicGo-Core config"\n${res}`);
       return {
         code: -1,
         msg: `"Please check PicGo-Core config"\n${res}`,
@@ -121,7 +147,12 @@ export class PicGoCoreUploader {
     } else {
       command = `picgo upload`;
     }
-    const res = await this.exec(command);
+    // const res = await this.exec(command);
+    // const res = spawn("picgo", ["upload"], {
+    //   shell: true,
+    // }).stdout.toString();
+    const res = await this.spawnChild();
+
     return res;
   }
 
@@ -129,5 +160,29 @@ export class PicGoCoreUploader {
     let { stdout } = await exec(command);
     const res = await streamToString(stdout);
     return res;
+  }
+
+  async spawnChild() {
+    const { spawn } = require("child_process");
+    const child = spawn("picgo", ["upload"], {
+      shell: true,
+    });
+
+    let data = "";
+    for await (const chunk of child.stdout) {
+      data += chunk;
+    }
+    let error = "";
+    for await (const chunk of child.stderr) {
+      error += chunk;
+    }
+    const exitCode = await new Promise((resolve, reject) => {
+      child.on("close", resolve);
+    });
+
+    if (exitCode) {
+      throw new Error(`subprocess error exit ${exitCode}, ${error}`);
+    }
+    return data;
   }
 }
