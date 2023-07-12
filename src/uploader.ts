@@ -147,11 +147,8 @@ export class PicGoCoreUploader {
     } else {
       command = `picgo upload`;
     }
-    // const res = await this.exec(command);
-    // const res = spawn("picgo", ["upload"], {
-    //   shell: true,
-    // }).stdout.toString();
-    const res = await this.spawnChild();
+    const res = await this.exec(command);
+    // const res = await this.spawnChild();
 
     return res;
   }

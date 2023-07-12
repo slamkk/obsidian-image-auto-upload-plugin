@@ -147,3 +147,7 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 2. 增加配置项用于处理图片描述[#91](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/91)
 3. 在 canvas 图片右键菜单中不显示 upload 菜单
 4. 尝试性修复[#103](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/103)，我也不知道行不行
+
+# 3.6.0
+
+好像不行，又改回了原来的实现[#103]，期待有缘人解决
