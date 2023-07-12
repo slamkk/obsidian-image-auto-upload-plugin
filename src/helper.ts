@@ -9,7 +9,7 @@ interface Image {
 // ![](./dsa/aa.png) local image should has ext
 // ![](https://dasdasda) internet image should not has ext
 const REGEX_FILE = /\!\[(.*?)\]\((\S+\.\w+)\)|\!\[(.*?)\]\((https?:\/\/.*?)\)/g;
-const REGEX_WIKI_FILE = /\!\[\[(.*?)(\s\|.*?)?\]\]/g;
+const REGEX_WIKI_FILE = /\!\[\[(.*?)(\s*?\|.*?)?\]\]/g;
 export default class Helper {
   app: App;
 
@@ -86,15 +86,22 @@ export default class Helper {
     }
 
     for (const match of WikiMatches) {
-      const name = parse(match[1]).name;
+      console.log(match);
+
+      let name = parse(match[1]).name;
       const path = match[1];
       const source = match[0];
+      if (match[2]) {
+        name = `${name}${match[2]}`;
+      }
       fileArray.push({
         path: path,
         name: name,
         source: source,
       });
     }
+    console.log(fileArray);
+
     return fileArray;
   }
 
