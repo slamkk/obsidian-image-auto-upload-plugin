@@ -86,8 +86,6 @@ export default class Helper {
     }
 
     for (const match of WikiMatches) {
-      console.log(match);
-
       let name = parse(match[1]).name;
       const path = match[1];
       const source = match[0];
