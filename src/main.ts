@@ -441,7 +441,6 @@ export default class imageAutoUploadPlugin extends Plugin {
       this.app.vault.adapter as FileSystemAdapter
     ).getBasePath();
     const activeFile = this.app.workspace.getActiveFile();
-    // TODO:做文件路径判断
     const fileMap = arrayToObject(this.app.vault.getFiles(), "name");
     const filePathMap = arrayToObject(this.app.vault.getFiles(), "path");
     let imageList: Image[] = [];
