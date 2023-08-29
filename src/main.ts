@@ -183,6 +183,7 @@ export default class imageAutoUploadPlugin extends Plugin {
   };
 
   async downloadAllImageFiles() {
+    const activeFile = this.app.workspace.getActiveFile();
     const folderPath = this.getFileAssetPath();
     const fileArray = this.helper.getAllFiles();
     if (!existsSync(folderPath)) {
@@ -239,6 +240,11 @@ export default class imageAutoUploadPlugin extends Plugin {
       );
     });
 
+    const currentFile = this.app.workspace.getActiveFile();
+    if (activeFile.path !== currentFile.path) {
+      new Notice("当前文件已变更，下载失败");
+      return;
+    }
     this.helper.setValue(value);
 
     new Notice(
@@ -435,6 +441,7 @@ export default class imageAutoUploadPlugin extends Plugin {
       this.app.vault.adapter as FileSystemAdapter
     ).getBasePath();
     const activeFile = this.app.workspace.getActiveFile();
+    // TODO:做文件路径判断
     const fileMap = arrayToObject(this.app.vault.getFiles(), "name");
     const filePathMap = arrayToObject(this.app.vault.getFiles(), "path");
     let imageList: Image[] = [];
@@ -521,6 +528,11 @@ export default class imageAutoUploadPlugin extends Plugin {
             `![${name}](${uploadImage})`
           );
         });
+        const currentFile = this.app.workspace.getActiveFile();
+        if (activeFile.path !== currentFile.path) {
+          new Notice("当前文件已变更，上传失败");
+          return;
+        }
         this.helper.setValue(content);
 
         if (this.settings.deleteSource) {

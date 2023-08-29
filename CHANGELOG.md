@@ -152,3 +152,7 @@ fix [issue42](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issu
 
 1. 命令行上传好像还是不行，改回了原来的实现[#103]，期待有缘人解决
 2. 修复 wiki 链接的上传[#102](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/102)
+
+# 3.6.1
+
+1. 批量上传与下载后验证前后文件路径是否相同，防止覆盖 [[#108]](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/108)
