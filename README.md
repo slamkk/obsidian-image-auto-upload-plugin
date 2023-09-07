@@ -2,7 +2,10 @@
 
 # Obsidian Image Auto Upload Plugin
 
-This plugin can help you to auto upload image by [picgo](https://github.com/Molunerfinn/PicGo) or [PicGo-Core](https://picgo.github.io/PicGo-Core-Doc/).
+This plugin can help you to auto upload image by
+[PicGo](https://github.com/Molunerfinn/PicGo)
+[PicGo-Core](https://picgo.github.io/PicGo-Core-Doc/)
+[PicList](https://github.com/Kuingsmile/PicList)
 
 **You should restart obsidian after updating the plugin.**
 
@@ -11,8 +14,15 @@ This plugin can help you to auto upload image by [picgo](https://github.com/Molu
 1. install the [picgo](https://github.com/Molunerfinn/PicGo) and config it
 2. open the tool and open the setting "设置 server"
 3. install the plugin in obsidian
-4. open the plugin setting, and set the "picGo server" http://127.0.0.1:{{port in picgo}}/upload（example：http://127.0.0.1:36677/upload）
+4. open the plugin setting, and set the "picGo server" `http://127.0.0.1:{{port in picgo}}/upload`（example：`http://127.0.0.1:36677/upload`）
 5. try paste image
+
+## Set picbed and configName
+
+If you are using PicList (version >= 2.5.3), you can set the picbed and configName through url parameters.
+example: `http://127.0.0.1:36677/upload?picbed=smms&configName=piclist`
+This will upload the image to the smms picbed and use the piclist configName.
+Use this feature, you can upload image to different picbeds in different vaults.
 
 # Features
 
