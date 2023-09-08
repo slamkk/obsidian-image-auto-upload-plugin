@@ -1,6 +1,6 @@
 # Obsidian Image Auto Upload Plugin
 
-这是一个支持 PicGo、PicGo-Core 上传图片到图床的工具
+这是一个支持 PicGo、PicList、PicGo-Core 上传图片到图床的工具
 **更新插件后记得重启一下 Obsidian**
 
 # 开始
@@ -8,8 +8,15 @@
 1. 安装 PicGo 工具，并进行配置，配置参考[官网](https://github.com/Molunerfinn/PicGo)
 2. 开启 PicGo 的 Server 服务，并记住端口号
 3. 安装插件
-4. 打开插件配置项，设置为http://127.0.0.1:{{PicGo设置的端口号}}/upload（例如：http://127.0.0.1:36677/upload）
+4. 打开插件配置项，设置为`http://127.0.0.1:{{PicGo设置的端口号}}/upload`（例如：`http://127.0.0.1:36677/upload`）
 5. 接下来试试看能否上传成功
+
+## 设置图床和配置名
+
+如果你使用的是 PicList(version >= 2.5.3)，你可以通过 url 参数设置图床和配置名。
+例如：`http://127.0.0.1:36677/upload?picbed=smms&configName=piclist`
+这将会上传图片到 `smms` 图床，并且使用配置名为`piclist`的图床设置。
+使用这个功能，你可以在不同的 Obsidian vault 中上传到不同的图床。
 
 # 特性
 

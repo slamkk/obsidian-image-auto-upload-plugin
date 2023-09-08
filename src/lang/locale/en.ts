@@ -7,12 +7,13 @@ export default {
   "If you set this value true, when you paste image, it will be auto uploaded(you should set the picGo server rightly)":
     "If you set this value true, when you paste image, it will be auto uploaded(you should set the picGo server rightly)",
   "Default uploader": "Default uploader",
-  "PicGo server": "PicGo server",
-  "Please input PicGo server": "Please input PicGo server",
+  "PicGo server": "PicGo server upload route",
+  "PicGo server desc": "upload route, use PicList will be able to set picbed and config through query",
+  "Please input PicGo server": "Please input upload route",
   "PicGo delete server":
     "PicGo server delete route(you need to use PicList app)",
   "PicList desc": "Search PicList on Github to download and install",
-  "Please input PicGo delete server": "Please input PicGo delete server",
+  "Please input PicGo delete server": "Please input delete server",
   "Delete image using PicList": "Delete image using PicList",
   "PicGo-Core path": "PicGo-Core path",
   "Delete successfully": "Delete successfully",

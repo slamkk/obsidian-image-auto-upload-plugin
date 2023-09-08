@@ -83,7 +83,7 @@ export class SettingTab extends PluginSettingTab {
     if (this.plugin.settings.uploader === "PicGo") {
       new Setting(containerEl)
         .setName(t("PicGo server"))
-        .setDesc(t("PicGo server"))
+        .setDesc(t("PicGo server desc"))
         .addText(text =>
           text
             .setPlaceholder(t("Please input PicGo server"))
