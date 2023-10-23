@@ -1,8 +1,5 @@
-import axios from "axios";
-import { createReadStream, readFile } from "fs";
-import { FormData, File } from "formdata-node";
-import { Readable } from "stream";
-import { FormDataEncoder } from "form-data-encoder";
+import { readFile } from "fs";
+import { fetch, FormData } from "node-fetch-native";
 
 import { PluginSettings } from "./setting";
 import { streamToString, getLastImage, bufferToArrayBuffer } from "./utils";
@@ -27,11 +24,9 @@ export class PicGoUploader {
 
   async uploadFiles(fileList: Array<string>): Promise<any> {
     let response: any;
+    let data: PicGoResponse;
 
     if (this.settings.remoteServerMode) {
-      console.log(fileList);
-      new File([""], "filename");
-
       const files = [];
       for (let i = 0; i < fileList.length; i++) {
         const file = fileList[i];
@@ -46,9 +41,8 @@ export class PicGoUploader {
         const arrayBuffer = bufferToArrayBuffer(buffer);
         files.push(new File([arrayBuffer], file));
       }
-      console.log(files);
-      // @ts-ignore
       response = await this.uploadFileByData(files);
+      data = await response.json();
     } else {
       response = await requestUrl({
         url: this.settings.uploadServer,
@@ -56,9 +50,8 @@ export class PicGoUploader {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ list: fileList }),
       });
+      data = await response.json;
     }
-
-    const data = await response.json;
 
     // piclist
     if (data.fullResult) {
@@ -72,38 +65,18 @@ export class PicGoUploader {
     return data;
   }
 
-  async uploadFileByData(fileList: FileList): Promise<any> {
+  async uploadFileByData(fileList: FileList | File[]): Promise<any> {
     const form = new FormData();
-    form.append("list", fileList[0]);
+    for (let i = 0; i < fileList.length; i++) {
+      form.append("list", fileList[i]);
+    }
 
-    const encoder = new FormDataEncoder(form);
-    console.log(encoder, fileList[0]);
     const options = {
       method: "post",
-      headers: encoder.headers,
-      body: Readable.from(encoder),
+      body: form,
     };
 
-    // @ts-ignore
-    const response = await fetch("http://127.0.0.1:36677/upload", options);
-    // let config = {
-    //   method: "post",
-    //   maxBodyLength: Infinity,
-    //   url: "http://127.0.0.1:36677/upload",
-    //   headers: {
-    //     "content-type": encoder.headers["content-type"],
-    //   },
-    //   body: Readable.from(encoder),
-    // };
-    // console.log(config);
-
-    // const response = await axios.post(
-    //   "http://127.0.0.1:36677/upload",
-    //   Readable.from(encoder),
-    //   {
-    //     headers: encoder.headers,
-    //   }
-    // );
+    const response = await fetch(this.settings.uploadServer, options);
     console.log("response", response);
     return response;
   }
@@ -114,7 +87,7 @@ export class PicGoUploader {
 
     if (this.settings.remoteServerMode) {
       res = await this.uploadFileByData(fileList);
-      data = res.data;
+      data = await res.json();
     } else {
       res = await requestUrl({
         url: this.settings.uploadServer,
@@ -122,7 +95,6 @@ export class PicGoUploader {
       });
 
       data = await res.json;
-      console.log(11, data);
     }
 
     if (res.status !== 200) {

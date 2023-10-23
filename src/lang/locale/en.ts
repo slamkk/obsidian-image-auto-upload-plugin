@@ -49,4 +49,11 @@ export default {
   "Remote server mode": "Remote server mode",
   "Remote server mode desc":
     "If you have deployed piclist-core or piclist on the server.",
+  "Can not find image file": "Can not find image file",
+  "File has been changedd, upload failure":
+    "File has been changedd, upload failure",
+  "File has been changedd, download failure":
+    "File has been changedd, download failure",
+  "Warning: upload files is different of reciver files from api":
+    "Warning: upload files num is different of reciver files from api",
 };

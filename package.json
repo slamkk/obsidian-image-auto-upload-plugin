@@ -27,10 +27,8 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "axios": "^1.5.1",
     "fix-path": "^4.0.0",
-    "form-data-encoder": "^3.0.0",
-    "formdata-node": "^5.0.1",
-    "image-type": "^5.2.0"
+    "image-type": "^5.2.0",
+    "node-fetch-native": "^1.4.0"
   }
 }

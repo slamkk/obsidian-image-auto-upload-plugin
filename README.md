@@ -56,6 +56,18 @@ Now you can upload image by contextMenu in edit mode.
 
 ## Support drag-and-drop
 
+Only work for picgo or picList app.
+
+## server mode
+
+You can deploy [PicList](https://github.com/Kuingsmile/PicList/releases) or [PicList-Core](https://github.com/Kuingsmile/PicList-Core) in your server and upload to it.
+
+Support [PicList](https://github.com/Kuingsmile/PicList/releases) 2.6.3 later or [PicList-Core](https://github.com/Kuingsmile/PicList-Core)1.3.0 later
+
+You can not upload network in this mode.
+如果无法粘贴时上传图片，你也可以尝试启用该模式
+If you upload fail when you paste img, you can alse try to enable the mode.
+
 ## Support picgo-core
 
 You can install picgo-core with npm. Reference to [doc](https://picgo.github.io/PicGo-Core-Doc/)

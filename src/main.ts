@@ -242,7 +242,7 @@ export default class imageAutoUploadPlugin extends Plugin {
 
     const currentFile = this.app.workspace.getActiveFile();
     if (activeFile.path !== currentFile.path) {
-      new Notice("当前文件已变更，下载失败");
+      new Notice(t("File has been changedd, download failure"));
       return;
     }
     this.helper.setValue(value);
@@ -366,7 +366,7 @@ export default class imageAutoUploadPlugin extends Plugin {
     }
 
     if (imageList.length === 0) {
-      new Notice("没有解析到图像文件");
+      new Notice(t("Can not find image file"));
       return;
     }
 
@@ -508,7 +508,7 @@ export default class imageAutoUploadPlugin extends Plugin {
     }
 
     if (imageList.length === 0) {
-      new Notice("没有解析到图像文件");
+      new Notice(t("Can not find image file"));
       return;
     } else {
       new Notice(`共找到${imageList.length}个图像文件，开始上传`);
@@ -517,6 +517,12 @@ export default class imageAutoUploadPlugin extends Plugin {
     this.uploader.uploadFiles(imageList.map(item => item.path)).then(res => {
       if (res.success) {
         let uploadUrlList = res.result;
+
+        if (imageList.length !== uploadUrlList.length) {
+          new Notice(
+            t("Warning: upload files is different of reciver files from api")
+          );
+        }
 
         imageList.map(item => {
           const uploadImage = uploadUrlList.shift();
@@ -529,7 +535,7 @@ export default class imageAutoUploadPlugin extends Plugin {
         });
         const currentFile = this.app.workspace.getActiveFile();
         if (activeFile.path !== currentFile.path) {
-          new Notice("当前文件已变更，上传失败");
+          new Notice(t("File has been changedd, upload failure"));
           return;
         }
         this.helper.setValue(content);
