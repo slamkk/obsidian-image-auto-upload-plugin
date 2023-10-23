@@ -43,4 +43,6 @@ export default {
   reserve: "默认",
   "remove all": "无",
   "remove default": "移除image.png",
+  "Remote server mode": "远程服务器模式",
+  "Remote server mode desc": "如果你在服务器部署了piclist-core或者piclist",
 };

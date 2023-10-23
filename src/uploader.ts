@@ -1,11 +1,16 @@
+import axios from "axios";
+import { createReadStream, readFile } from "fs";
+import { FormData, File } from "formdata-node";
+import { Readable } from "stream";
+import { FormDataEncoder } from "form-data-encoder";
+
 import { PluginSettings } from "./setting";
-import { streamToString, getLastImage } from "./utils";
+import { streamToString, getLastImage, bufferToArrayBuffer } from "./utils";
 import { exec, spawnSync, spawn } from "child_process";
 import { Notice, requestUrl } from "obsidian";
 import imageAutoUploadPlugin from "./main";
 
 export interface PicGoResponse {
-  success: string;
   msg: string;
   result: string[];
   fullResult: Record<string, any>[];
@@ -20,13 +25,38 @@ export class PicGoUploader {
     this.plugin = plugin;
   }
 
-  async uploadFiles(fileList: Array<String>): Promise<any> {
-    const response = await requestUrl({
-      url: this.settings.uploadServer,
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ list: fileList }),
-    });
+  async uploadFiles(fileList: Array<string>): Promise<any> {
+    let response: any;
+
+    if (this.settings.remoteServerMode) {
+      console.log(fileList);
+      new File([""], "filename");
+
+      const files = [];
+      for (let i = 0; i < fileList.length; i++) {
+        const file = fileList[i];
+        const buffer: Buffer = await new Promise((resolve, reject) => {
+          readFile(file, (err, data) => {
+            if (err) {
+              reject(err);
+            }
+            resolve(data);
+          });
+        });
+        const arrayBuffer = bufferToArrayBuffer(buffer);
+        files.push(new File([arrayBuffer], file));
+      }
+      console.log(files);
+      // @ts-ignore
+      response = await this.uploadFileByData(files);
+    } else {
+      response = await requestUrl({
+        url: this.settings.uploadServer,
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ list: fileList }),
+      });
+    }
 
     const data = await response.json;
 
@@ -42,13 +72,66 @@ export class PicGoUploader {
     return data;
   }
 
-  async uploadFileByClipboard(): Promise<any> {
-    const res = await requestUrl({
-      url: this.settings.uploadServer,
-      method: "POST",
-    });
+  async uploadFileByData(fileList: FileList): Promise<any> {
+    const form = new FormData();
+    form.append("list", fileList[0]);
 
-    let data: PicGoResponse = await res.json;
+    const encoder = new FormDataEncoder(form);
+    console.log(encoder, fileList[0]);
+    const options = {
+      method: "post",
+      headers: encoder.headers,
+      body: Readable.from(encoder),
+    };
+
+    // @ts-ignore
+    const response = await fetch("http://127.0.0.1:36677/upload", options);
+    // let config = {
+    //   method: "post",
+    //   maxBodyLength: Infinity,
+    //   url: "http://127.0.0.1:36677/upload",
+    //   headers: {
+    //     "content-type": encoder.headers["content-type"],
+    //   },
+    //   body: Readable.from(encoder),
+    // };
+    // console.log(config);
+
+    // const response = await axios.post(
+    //   "http://127.0.0.1:36677/upload",
+    //   Readable.from(encoder),
+    //   {
+    //     headers: encoder.headers,
+    //   }
+    // );
+    console.log("response", response);
+    return response;
+  }
+
+  async uploadFileByClipboard(fileList?: FileList): Promise<any> {
+    let data: PicGoResponse;
+    let res: any;
+
+    if (this.settings.remoteServerMode) {
+      res = await this.uploadFileByData(fileList);
+      data = res.data;
+    } else {
+      res = await requestUrl({
+        url: this.settings.uploadServer,
+        method: "POST",
+      });
+
+      data = await res.json;
+      console.log(11, data);
+    }
+
+    if (res.status !== 200) {
+      return {
+        code: -1,
+        msg: data.msg,
+        data: "",
+      };
+    }
 
     // piclist
     if (data.fullResult) {
@@ -60,20 +143,11 @@ export class PicGoUploader {
       this.plugin.saveSettings();
     }
 
-    if (res.status !== 200) {
-      let err = { response: data, body: data.msg };
-      return {
-        code: -1,
-        msg: data.msg,
-        data: "",
-      };
-    } else {
-      return {
-        code: 0,
-        msg: "success",
-        data: typeof data.result == "string" ? data.result : data.result[0],
-      };
-    }
+    return {
+      code: 0,
+      msg: "success",
+      data: typeof data.result == "string" ? data.result : data.result[0],
+    };
   }
 }
 

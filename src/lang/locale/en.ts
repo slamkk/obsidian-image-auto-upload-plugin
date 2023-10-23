@@ -8,7 +8,8 @@ export default {
     "If you set this value true, when you paste image, it will be auto uploaded(you should set the picGo server rightly)",
   "Default uploader": "Default uploader",
   "PicGo server": "PicGo server upload route",
-  "PicGo server desc": "upload route, use PicList will be able to set picbed and config through query",
+  "PicGo server desc":
+    "upload route, use PicList will be able to set picbed and config through query",
   "Please input PicGo server": "Please input upload route",
   "PicGo delete server":
     "PicGo server delete route(you need to use PicList app)",
@@ -45,4 +46,7 @@ export default {
   reserve: "default",
   "remove all": "none",
   "remove default": "remove image.png",
+  "Remote server mode": "Remote server mode",
+  "Remote server mode desc":
+    "If you have deployed piclist-core or piclist on the server.",
 };

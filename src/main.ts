@@ -605,7 +605,11 @@ export default class imageAutoUploadPlugin extends Plugin {
             this.uploadFileAndEmbedImgurImage(
               editor,
               async (editor: Editor, pasteId: string) => {
-                let res = await this.uploader.uploadFileByClipboard();
+                let res: any;
+                res = await this.uploader.uploadFileByClipboard(
+                  evt.clipboardData.files
+                );
+
                 if (res.code !== 0) {
                   this.handleFailedUpload(editor, pasteId, res.msg);
                   return;
@@ -636,7 +640,7 @@ export default class imageAutoUploadPlugin extends Plugin {
           }
 
           if (files.length !== 0 && files[0].type.startsWith("image")) {
-            let sendFiles: Array<String> = [];
+            let sendFiles: Array<string> = [];
             let files = evt.dataTransfer.files;
             Array.from(files).forEach((item, index) => {
               sendFiles.push(item.path);

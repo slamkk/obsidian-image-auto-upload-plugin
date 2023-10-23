@@ -16,6 +16,7 @@ export interface PluginSettings {
   applyImage: boolean;
   deleteSource: boolean;
   imageDesc: "origin" | "none" | "removeDefault";
+  remoteServerMode: boolean;
   [propName: string]: any;
 }
 
@@ -32,6 +33,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   newWorkBlackDomains: "",
   deleteSource: false,
   imageDesc: "origin",
+  remoteServerMode: false,
 };
 
 export class SettingTab extends PluginSettingTab {
@@ -107,6 +109,18 @@ export class SettingTab extends PluginSettingTab {
             })
         );
     }
+
+    new Setting(containerEl)
+      .setName(t("Remote server mode"))
+      .setDesc(t("Remote server mode desc"))
+      .addToggle(toggle =>
+        toggle
+          .setValue(this.plugin.settings.remoteServerMode)
+          .onChange(async value => {
+            this.plugin.settings.remoteServerMode = value;
+            await this.plugin.saveSettings();
+          })
+      );
 
     if (this.plugin.settings.uploader === "PicGo-Core") {
       new Setting(containerEl)
