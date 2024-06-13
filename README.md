@@ -32,7 +32,7 @@ When you paste image to obsidian, this plugin will auto upload you image.
 
 You can set `image-auto-upload: false` in `frontmatter` to control one file.
 
-support ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".svg", ".tiff", ".webp", ".avif"
+support ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".svg", ".tiff", ".webp", ".avif", ".heic"
 
 Because of the [bug](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/2) in PicGo 2.3.0-beta7, you can not use this feature. you can install other PicGo version.
 

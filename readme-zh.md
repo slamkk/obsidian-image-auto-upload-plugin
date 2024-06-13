@@ -1,6 +1,8 @@
 # Obsidian Image Auto Upload Plugin
 
 这是一个支持 PicGo、PicList、PicGo-Core 上传图片到图床的工具
+
+2024年6月13日：更新增加HEIC格式的自动上传
 **更新插件后记得重启一下 Obsidian**
 
 # 开始
@@ -25,7 +27,7 @@
 支持黏贴剪切板的图片的时候直接上传，目前支持复制系统内图像直接上传。
 支持通过设置 `frontmatter` 来控制单个文件的上传，默认值为 `true`，控制关闭请将该值设置为 `false`
 
-支持 ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".svg", ".tiff", ".webp", ".avif"
+支持 ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".svg", ".tiff", ".webp", ".avif", ".heic" 格式的图片上传
 
 该功能在 PicGo 2.3.0-beta7 版本中无法使用，请更换其他版本
 
