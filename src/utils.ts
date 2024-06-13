@@ -16,6 +16,7 @@ const IMAGE_EXT_LIST = [
   ".tiff",
   ".webp",
   ".avif",
+  ".heic", // 添加对 HEIC 格式的支持
 ];
 
 export function isAnImage(ext: string) {

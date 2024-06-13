@@ -30,5 +30,6 @@
     "fix-path": "^4.0.0",
     "image-type": "^5.2.0",
     "node-fetch-native": "^1.4.0"
-  }
+  },
+  "packageManager": "yarn@4.3.0"
 }
